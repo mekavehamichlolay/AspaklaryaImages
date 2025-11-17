@@ -5,7 +5,6 @@ namespace MediaWiki\Extension\AspaklaryaImages;
 use MediaWiki\FileRepo\File\File as FileRepoFile;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Permissions\Authority;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
@@ -112,7 +111,7 @@ class File {
         }
         return $this->isAuthorizedOpen();
     }
-    
+
     public function setNetfreeStatus ( bool $open ): self {
         $this->statusBits |= self::NETFREE_KNOWN_BIT;
         if ( $open ) {
