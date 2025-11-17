@@ -1,0 +1,53 @@
+[
+    {
+        "name": "ai_images",
+        "comment": "data about images status",
+        "columns": [
+            {
+                "name": "ai_id",
+                "type": "integer",
+                "options": {
+                    "unsigned": true,
+                    "notnull": true,
+                    "autoincrement": true
+                }
+            },
+            {
+                "name": "ai_image_title",
+                "type": "binary",
+                "options": {
+                    "length": 255,
+                    "notnull": true
+                }
+            },
+            {
+                "name": "ai_status",
+                "type": "mwtinyint",
+                "options": {
+                    "unsigned": true,
+                    "notnull": true,
+                    "default": 0
+                }
+            }
+        ],
+        "indexes": [
+            {
+                "name": "ai_id",
+                "columns": [
+                    "ai_id"
+                ],
+                "unique": true
+            },
+            {
+                "name": "ai_image_title",
+                "columns": [
+                    "ai_image_title"
+                ],
+                "unique": true
+            }
+        ],
+        "pk": [
+            "ai_id"
+        ]
+    }
+]
