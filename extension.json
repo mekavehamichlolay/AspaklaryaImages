@@ -19,11 +19,27 @@
 		"MediaWiki\\Extension\\AspaklaryaImages\\": "includes/"
 	},
 	"GroupPermissions": {
-		"aspaklaryaEditor": {},
-		"sysop": {},
-		"spiritualCommittee": {}
+		"aspaklaryaEditor": {
+			"aspaklaryaimages-manage-status": true,
+			"aspaklaryaimages-view-status": true
+		},
+		"sysop": {
+			"aspaklaryaimages-manage-status": true,
+			"aspaklaryaimages-view-status": true
+		},
+		"spiritualCommittee": {
+			"aspaklaryaimages-manage-status": true,
+			"aspaklaryaimages-view-status": true
+		},
+		"imagesconfirmers": {
+			"aspaklaryaimages-manage-status": true,
+			"aspaklaryaimages-view-status": true
+		}
 	},
-	"AvailableRights": [],
+	"AvailableRights": [
+		"aspaklaryaimages-manage-status",
+		"aspaklaryaimages-view-status"
+	],
 	"Hooks": {
 		"LoadExtensionSchemaUpdates": "schema"
 	},
