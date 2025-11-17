@@ -8,6 +8,12 @@ use RuntimeException;
 
 class File {
 
+    public const NETFREE_KNOWN_BIT = 1;
+    public const NETFREE_OPEN_BIT = 2;
+
+    public const AUTHORIZED_KNOWN_BIT = 4;
+    public const AUTHORIZED_OPEN_BIT = 8;
+
     private Title $title;
 
     public function __construct( string $title ) {
