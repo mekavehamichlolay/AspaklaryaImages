@@ -134,7 +134,7 @@ class File {
 
     public function updateStatus( User $performer ): Status {
         if ( !$performer->isAllowed( self::RESTRICTION ) ) {
-            return Status::newFatal( wfMessage( 'aspaklaryaimages-manage-status-denied' ) );
+            return Status::newFatal( wfMessage( 'aspaklaryaimages-manage-status-unauthorized' ) );
         }
         return $this->saveStatus( $this->statusBits, $performer );
     }
