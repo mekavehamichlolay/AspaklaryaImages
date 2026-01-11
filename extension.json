@@ -41,11 +41,19 @@
 		"aspaklaryaimages-view-status"
 	],
 	"Hooks": {
-		"LoadExtensionSchemaUpdates": "schema"
+		"LoadExtensionSchemaUpdates": "schema",
+		"ImageBeforeProduceHTML": "main"
 	},
 	"HookHandlers": {
 		"schema": {
 			"class": "MediaWiki\\Extension\\AspaklaryaImages\\Hooks\\SchemaUpdater"
+		},
+		"main": {
+			"class": "MediaWiki\\Extension\\AspaklaryaImages\\Hooks\\Main",
+			"services": [
+				"DBLoadBalancer",
+				"MainWANObjectCache"
+			]
 		}
 	},
 	"LogTypes": [],
