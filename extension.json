@@ -19,6 +19,9 @@
 		"MediaWiki\\Extension\\AspaklaryaImages\\": "includes/"
 	},
 	"GroupPermissions": {
+		"*": {
+			"aspaklaryaimages-show-unknown-images": true
+		},
 		"aspaklaryaEditor": {
 			"aspaklaryaimages-manage-status": true,
 			"aspaklaryaimages-view-status": true,

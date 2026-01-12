@@ -25,10 +25,10 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 	public function onGetPreferences( $user, &$preferences ) {
 		$options = [];
 		if ( $user->isAllowed( 'aspaklaryaimages-show-unknown-images' ) ) {
-			$options['aspaklaryaimages-show-unknown-images'] = true;
+			$options['aspaklaryaimages-show-unknown-images'] = 'unknown';
 		}
 		if ( $user->isAllowed( 'aspaklaryaimages-show-blocked-images' ) ) {
-			$options['aspaklaryaimages-show-blocked-images'] = true;
+			$options['aspaklaryaimages-show-blocked-images'] = 'blocked';
 		}
 		$preferences['aspaklarya-images'] = [
 				'type' => 'multiselect',
