@@ -2,18 +2,16 @@
 
 namespace MediaWiki\Extension\AspaklaryaImages\Hooks;
 
-use MediaWiki\FileRepo\File\File;
 use MediaWiki\Hook\ImageBeforeProduceHTMLHook;
-use MediaWiki\Parser\Parser;
-use MediaWiki\Title\Title;
-use MediaWiki\Extension\AspaklaryaImages\File as AIFile;
+use MediaWiki\Extension\AspaklaryaImages\File;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPreferencesHook {
-
+	private Array $availableOptions = [ 'unknown', 'blocked' ];
 
     public function __construct( private ILoadBalancer $loadBalancer, private WANObjectCache $cache ) {
         
@@ -24,11 +22,11 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 	 */
 	public function onGetPreferences( $user, &$preferences ) {
 		$options = [];
-		if ( $user->isAllowed( 'aspaklaryaimages-show-unknown-images' ) ) {
-			$options['aspaklaryaimages-show-unknown-images'] = 'unknown';
-		}
-		if ( $user->isAllowed( 'aspaklaryaimages-show-blocked-images' ) ) {
-			$options['aspaklaryaimages-show-blocked-images'] = 'blocked';
+		foreach ( $this->availableOptions as $option ) {
+			if ( !$user->isAllowed( "aspaklaryaimages-show-$option-images" ) ) {
+				continue;
+			}
+			$options["aspaklaryaimages-show-$option"] = "-show-$option";
 		}
 		$preferences['aspaklarya-images'] = [
 				'type' => 'multiselect',
@@ -47,36 +45,41 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 			return;
 		}
 		$user = $out->getUser();
-
+		$bodyClasses = '';
+		$userOptionsLookup = MediaWikiServices::getInstance()->getUserOptionsLookup();
+		foreach ( $this->availableOptions as $option ) {
+			$right = "aspaklaryaimages-show-$option-images";
+			$class = " ai-preference-hide-$option";
+			$userOption = "aspaklaryaimages-show-$option";
+			if ( !$user || !$user->isSafeToLoad() || !$user->isAllowed( $right ) ) {
+				if ( !(bool)$userOptionsLookup->getDefaultOption( $userOption ) ) {
+					$bodyClasses .= $class;
+				}
+				continue;
+			}
+			$optionValue = $userOptionsLookup->getOption( $user, $userOption );
+			if ( $optionValue === null ) {
+				if ( !(bool)$userOptionsLookup->getDefaultOption( $userOption ) ) {
+					$bodyClasses .= $class;
+				}
+				continue;
+			}
+			if ( !(bool)$optionValue ) {
+				$bodyClasses .= $class;
+			}
+		}
+		
+		$out->addBodyClasses( $bodyClasses );
 		$out->addModuleStyles( 'ext.aspaklaryaimages.styles' );
 	}
 	
     /**
-	 * This hook is called before producing the HTML created by a wiki image insertion.
-	 * You can skip the default logic entirely by returning false, or just modify a few
-	 * things using call-by-reference.
-	 *
-	 * @since 1.35
-	 *
-	 * @param null $unused Will always be null
-	 * @param Title &$title Title object of the image
-	 * @param File|false &$file File object, or false if it doesn't exist
-	 * @param array &$frameParams Various parameters with special meanings; see documentation in
-	 *   includes/Linker.php for Linker::makeImageLink
-	 * @param array &$handlerParams Various parameters with special meanings; see documentation in
-	 *   includes/Linker.php for Linker::makeImageLink
-	 * @param string|bool &$time Timestamp of file in 'YYYYMMDDHHIISS' string
-	 *   form, or false for current
-	 * @param string &$res Final HTML output, used if you return false
-	 * @param Parser $parser
-	 * @param string &$query Query params for desc URL
-	 * @param string &$widthOption Used by the parser to remember the user preference thumbnailsize
-	 * @return bool|void True or no return value to continue or false to skip the default logic
+	 * @inheritDoc
 	 */
 	public function onImageBeforeProduceHTML( $unused, &$title, &$file,
 		&$frameParams, &$handlerParams, &$time, &$res, $parser, &$query, &$widthOption
 	) {
-        $fileClass = new AIFile( $this->loadBalancer, $this->cache, $title );
+        $fileClass = new File( $this->loadBalancer, $this->cache, $title );
         $netfreeStatus = $fileClass->getNetfreeStatus();
         $authorizedStatus = $fileClass->getAuthorizedStatus();
         if ( $authorizedStatus === false ) {
@@ -90,7 +93,7 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
         if ( $netfreeStatus === null ) {
 			$parser->addTrackingCategory( 'aspaklarya-images-netfree-unknown-category' );
             $frameParams[ 'class' ] .= ' aspaklarya-images-netfree-unknown ';
-        } elseif ( !$netfreeStatus ) {
+        } elseif ( !(bool)$netfreeStatus ) {
 			$parser->addTrackingCategory( 'aspaklarya-images-netfree-blocked-category' );
             $frameParams[ 'class' ] .= ' aspaklarya-images-netfree-blocked ';
         } 

@@ -105,7 +105,7 @@
 		"aspaklarya-images-netfree-blocked-category"
 	],
 	"DefaultUserOptions": {
-		"aspaklaryaimages-show-unknown-images": 1,
-		"aspaklaryaimages-show-blocked-images": 0
+		"aspaklarya-images-show-unknown": 1,
+		"aspaklarya-images-show-blocked": 0
 	}
 }
