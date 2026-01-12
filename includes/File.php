@@ -35,7 +35,13 @@ class File {
 
     private int $statusBits = 0;
 
-    public function __construct( ILoadBalancer $loadBalancer, WANObjectCache $cache, string $title ) {
+    /**
+     * @param ILoadBalancer $loadBalancer
+     * @param WANObjectCache $cache
+     * @param Title $title
+     * @throws RuntimeException if the title is not a valid file title
+     */
+    public function __construct( ILoadBalancer $loadBalancer, WANObjectCache $cache, Title $title ) {
         
         $this->title = FileRepoFile::normalizeTitle( $title );
         if ( !$this->title || !$this->title->canExist()) {

@@ -54,7 +54,7 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook {
 	public function onImageBeforeProduceHTML( $unused, &$title, &$file,
 		&$frameParams, &$handlerParams, &$time, &$res, $parser, &$query, &$widthOption
 	) {
-        $fileClass = new AIFile( $this->loadBalancer, $this->cache, $title->getPrefixedDBKey() );
+        $fileClass = new AIFile( $this->loadBalancer, $this->cache, $title );
         $netfreeStatus = $fileClass->getNetfreeStatus();
         $authorizedStatus = $fileClass->getAuthorizedStatus();
         if ( $authorizedStatus === false ) {
