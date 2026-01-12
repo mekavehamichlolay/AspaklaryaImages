@@ -43,7 +43,7 @@ class File {
         }
         $this->loadBalancer = $loadBalancer;
         $this->cache = $cache;
-        $this->cacheKey = $this->cache->makeKey( 'aspaklarya-images', 'v1', $this->title->getPrefixedDBKey() );
+        $this->cacheKey = $this->cache->makeKey( 'aspaklarya-images', 'v1', $this->title->getDBKey() );
         $this->loadStatusBits();
     }
 
