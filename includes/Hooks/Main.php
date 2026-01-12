@@ -58,14 +58,17 @@ class Main implements ImageBeforeProduceHTMLHook {
         $authorizedStatus = $fileClass->getAuthorizedStatus();
         if ( $authorizedStatus === false ) {
             $res = '';
+			$parser->addTrackingCategory( 'aspaklarya-images-unauthorized-category' );
             return false;
         }
         if ( !isset( $frameParams['class'] ) ) {
             $frameParams['class'] = '';
         }
         if ( $netfreeStatus === null ) {
+			$parser->addTrackingCategory( 'aspaklarya-images-netfree-unknown-category' );
             $frameParams[ 'class' ] .= ' aspaklarya-images-netfree-unknown ';
         } elseif ( !$netfreeStatus ) {
+			$parser->addTrackingCategory( 'aspaklarya-images-netfree-blocked-category' );
             $frameParams[ 'class' ] .= ' aspaklarya-images-netfree-blocked ';
         } 
         return true;
