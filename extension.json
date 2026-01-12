@@ -72,6 +72,15 @@
 		"localBasePath": "resources",
 		"remoteExtPath": "AspaklaryaImages/resources"
 	},
-	"ResourceModules": {},
+	"ResourceModules": {
+		"ext.aspaklaryaimages.styles": {
+			"styles": "ext.aspaklaryaimages.css"
+		}
+	},
+	"TrackingCategories": [
+		"aspaklarya-images-unauthorized-category",
+		"aspaklarya-images-netfree-unknown-category",
+		"aspaklarya-images-netfree-blocked-category"
+	],
 	"DefaultUserOptions": {}
 }
