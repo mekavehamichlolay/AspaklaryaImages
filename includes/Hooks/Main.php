@@ -7,10 +7,11 @@ use MediaWiki\Hook\ImageBeforeProduceHTMLHook;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Title\Title;
 use MediaWiki\Extension\AspaklaryaImages\File as AIFile;
+use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
 
-class Main implements ImageBeforeProduceHTMLHook {
+class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook {
 
 
     public function __construct( private ILoadBalancer $loadBalancer, private WANObjectCache $cache ) {
