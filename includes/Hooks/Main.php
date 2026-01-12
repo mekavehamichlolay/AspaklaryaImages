@@ -16,6 +16,18 @@ class Main implements ImageBeforeProduceHTMLHook {
     public function __construct( private ILoadBalancer $loadBalancer, private WANObjectCache $cache ) {
         
     }
+
+	/**
+	 * @inheritDoc
+	 */
+	public function onBeforePageDisplay( $out, $skin ): void {
+		$title = $out->getTitle();
+		if ( !$title || !$title->canExist() ) {
+			return;
+		}
+		$out->addModuleStyles( 'ext.aspaklaryaimages.styles' );
+	}
+	
     /**
 	 * This hook is called before producing the HTML created by a wiki image insertion.
 	 * You can skip the default logic entirely by returning false, or just modify a few
