@@ -21,24 +21,34 @@
 	"GroupPermissions": {
 		"aspaklaryaEditor": {
 			"aspaklaryaimages-manage-status": true,
-			"aspaklaryaimages-view-status": true
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
 		},
 		"sysop": {
 			"aspaklaryaimages-manage-status": true,
-			"aspaklaryaimages-view-status": true
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
 		},
 		"spiritualCommittee": {
 			"aspaklaryaimages-manage-status": true,
-			"aspaklaryaimages-view-status": true
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
 		},
 		"imagesconfirmers": {
 			"aspaklaryaimages-manage-status": true,
-			"aspaklaryaimages-view-status": true
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
 		}
 	},
 	"AvailableRights": [
 		"aspaklaryaimages-manage-status",
-		"aspaklaryaimages-view-status"
+		"aspaklaryaimages-view-status",
+		"aspaklaryaimages-show-unknown-images",
+		"aspaklaryaimages-show-blocked-images"
 	],
 	"Hooks": {
 		"LoadExtensionSchemaUpdates": "schema",
@@ -65,8 +75,17 @@
 	"APIModules": {},
 	"ExtensionMessagesFiles": {},
 	"SpecialPages": {},
-	"GrantPermissionGroups": {},
-	"GrantPermissions": {},
+	"GrantPermissionGroups": {
+		"aspaklaryaimages": "administration"
+	},
+	"GrantPermissions": {
+		"aspaklaryaimages": {
+			"aspaklaryaimages-manage-status": true,
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
+		}
+	},
 	"config": {},
 	"ResourceFileModulePaths": {
 		"localBasePath": "resources",
@@ -82,5 +101,8 @@
 		"aspaklarya-images-netfree-unknown-category",
 		"aspaklarya-images-netfree-blocked-category"
 	],
-	"DefaultUserOptions": {}
+	"DefaultUserOptions": {
+		"aspaklaryaimages-show-unknown-images": 1,
+		"aspaklaryaimages-show-blocked-images": 0
+	}
 }

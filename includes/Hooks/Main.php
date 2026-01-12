@@ -8,10 +8,11 @@ use MediaWiki\Parser\Parser;
 use MediaWiki\Title\Title;
 use MediaWiki\Extension\AspaklaryaImages\File as AIFile;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
+use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
 
-class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook {
+class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPreferencesHook {
 
 
     public function __construct( private ILoadBalancer $loadBalancer, private WANObjectCache $cache ) {
@@ -21,11 +22,32 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook {
 	/**
 	 * @inheritDoc
 	 */
+	public function onGetPreferences( $user, &$preferences ) {
+		$options = [];
+		if ( $user->isAllowed( 'aspaklaryaimages-show-unknown-images' ) ) {
+			$options['aspaklaryaimages-show-unknown-images'] = true;
+		}
+		if ( $user->isAllowed( 'aspaklaryaimages-show-blocked-images' ) ) {
+			$options['aspaklaryaimages-show-blocked-images'] = true;
+		}
+		$preferences['aspaklarya-images'] = [
+				'type' => 'multiselect',
+				'label-message' => 'aspaklarya-images-preference-label',
+				'options-messages' => $options,
+				'help-message' => 'aspaklarya-images-preference-help',
+				'section' => 'aspaklarya/images',
+			];
+	}
+	/**
+	 * @inheritDoc
+	 */
 	public function onBeforePageDisplay( $out, $skin ): void {
 		$title = $out->getTitle();
 		if ( !$title || !$title->canExist() ) {
 			return;
 		}
+		$user = $out->getUser();
+
 		$out->addModuleStyles( 'ext.aspaklaryaimages.styles' );
 	}
 	
