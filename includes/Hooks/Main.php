@@ -50,7 +50,7 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 		foreach ( $this->availableOptions as $option ) {
 			$right = "aspaklaryaimages-show-$option-images";
 			$class = " ai-preference-hide-$option";
-			$userOption = "aspaklaryaimages-show-$option";
+			$userOption = "aspaklarya-images-show-$option";
 			if ( !$user || !$user->isSafeToLoad() || !$user->isAllowed( $right ) ) {
 				if ( !(bool)$userOptionsLookup->getDefaultOption( $userOption ) ) {
 					$bodyClasses .= $class;
@@ -81,6 +81,12 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 	) {
         $fileClass = new File( $this->loadBalancer, $this->cache, $title );
         $netfreeStatus = $fileClass->getNetfreeStatus();
+		$config = MediaWikiServices::getInstance()->getMainConfig();
+		$blockUnknown = (bool)$config->get( 'BlockNetfreeUnknownImages' );
+		if ( $blockUnknown && !(bool)$netfreeStatus ) {
+			$res = '';
+			return false;
+		}
         $authorizedStatus = $fileClass->getAuthorizedStatus();
         if ( $authorizedStatus === false ) {
             $res = '';
