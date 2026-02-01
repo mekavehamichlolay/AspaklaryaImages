@@ -19,33 +19,54 @@
 		"MediaWiki\\Extension\\AspaklaryaImages\\": "includes/"
 	},
 	"GroupPermissions": {
+		"*": {
+			"aspaklaryaimages-show-unknown-images": true
+		},
 		"aspaklaryaEditor": {
 			"aspaklaryaimages-manage-status": true,
-			"aspaklaryaimages-view-status": true
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
 		},
 		"sysop": {
 			"aspaklaryaimages-manage-status": true,
-			"aspaklaryaimages-view-status": true
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
 		},
 		"spiritualCommittee": {
 			"aspaklaryaimages-manage-status": true,
-			"aspaklaryaimages-view-status": true
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
 		},
 		"imagesconfirmers": {
 			"aspaklaryaimages-manage-status": true,
-			"aspaklaryaimages-view-status": true
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
 		}
 	},
 	"AvailableRights": [
 		"aspaklaryaimages-manage-status",
-		"aspaklaryaimages-view-status"
+		"aspaklaryaimages-view-status",
+		"aspaklaryaimages-show-unknown-images",
+		"aspaklaryaimages-show-blocked-images"
 	],
 	"Hooks": {
-		"LoadExtensionSchemaUpdates": "schema"
+		"LoadExtensionSchemaUpdates": "schema",
+		"ImageBeforeProduceHTML": "main"
 	},
 	"HookHandlers": {
 		"schema": {
 			"class": "MediaWiki\\Extension\\AspaklaryaImages\\Hooks\\SchemaUpdater"
+		},
+		"main": {
+			"class": "MediaWiki\\Extension\\AspaklaryaImages\\Hooks\\Main",
+			"services": [
+				"DBLoadBalancer",
+				"MainWANObjectCache"
+			]
 		}
 	},
 	"LogTypes": [],
@@ -57,13 +78,39 @@
 	"APIModules": {},
 	"ExtensionMessagesFiles": {},
 	"SpecialPages": {},
-	"GrantPermissionGroups": {},
-	"GrantPermissions": {},
-	"config": {},
+	"GrantPermissionGroups": {
+		"aspaklaryaimages": "administration"
+	},
+	"GrantPermissions": {
+		"aspaklaryaimages": {
+			"aspaklaryaimages-manage-status": true,
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
+		}
+	},
+	"config": {
+		"BlockNetfreeUnknownImages": {
+			"value": false,
+			"description": "If true, images with unknown netfree status will be blocked for all users in server level. it also won't add any placeholder or indication that the image is blocked, including any tracking category."
+		}
+	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "resources",
 		"remoteExtPath": "AspaklaryaImages/resources"
 	},
-	"ResourceModules": {},
-	"DefaultUserOptions": {}
+	"ResourceModules": {
+		"ext.aspaklaryaimages.styles": {
+			"styles": "ext.aspaklaryaimages.css"
+		}
+	},
+	"TrackingCategories": [
+		"aspaklarya-images-unauthorized-category",
+		"aspaklarya-images-netfree-unknown-category",
+		"aspaklarya-images-netfree-blocked-category"
+	],
+	"DefaultUserOptions": {
+		"aspaklarya-images-show-unknown": 1,
+		"aspaklarya-images-show-blocked": 0
+	}
 }

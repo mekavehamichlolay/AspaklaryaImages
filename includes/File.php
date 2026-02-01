@@ -35,7 +35,13 @@ class File {
 
     private int $statusBits = 0;
 
-    public function __construct( ILoadBalancer $loadBalancer, WANObjectCache $cache, string $title ) {
+    /**
+     * @param ILoadBalancer $loadBalancer
+     * @param WANObjectCache $cache
+     * @param Title $title
+     * @throws RuntimeException if the title is not a valid file title
+     */
+    public function __construct( ILoadBalancer $loadBalancer, WANObjectCache $cache, Title $title ) {
         
         $this->title = FileRepoFile::normalizeTitle( $title );
         if ( !$this->title || !$this->title->canExist()) {
@@ -43,7 +49,7 @@ class File {
         }
         $this->loadBalancer = $loadBalancer;
         $this->cache = $cache;
-        $this->cacheKey = $this->cache->makeKey( 'aspaklarya-images', 'v1', $this->title->getPrefixedDBKey() );
+        $this->cacheKey = $this->cache->makeKey( 'aspaklarya-images', 'v1', $this->title->getDBKey() );
         $this->loadStatusBits();
     }
 
@@ -134,7 +140,7 @@ class File {
 
     public function updateStatus( User $performer ): Status {
         if ( !$performer->isAllowed( self::RESTRICTION ) ) {
-            return Status::newFatal( wfMessage( 'aspaklaryaimages-manage-status-denied' ) );
+            return Status::newFatal( wfMessage( 'aspaklaryaimages-manage-status-unauthorized' ) );
         }
         return $this->saveStatus( $this->statusBits, $performer );
     }
