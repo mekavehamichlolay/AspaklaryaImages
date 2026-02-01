@@ -12,7 +12,7 @@ class SchemaUpdater implements LoadExtensionSchemaUpdatesHook {
     public function onLoadExtensionSchemaUpdates( $updater ) {
         $type = $updater->getDB()->getType();
         $updater->addExtensionTable(
-            'aspaklarya_images',
+            'ai_images',
             __DIR__ . '/../../db/' . $type . '/tables-generated.sql'
         );
     }
