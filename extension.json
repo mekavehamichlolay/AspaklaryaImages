@@ -89,7 +89,12 @@
 			"aspaklaryaimages-show-blocked-images": true
 		}
 	},
-	"config": {},
+	"config": {
+		"BlockNetfreeUnknownImages": {
+			"value": false,
+			"description": "If true, images with unknown netfree status will be blocked for all users in server level. it also won't add any placeholder or indication that the image is blocked, including any tracking category."
+		}
+	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "resources",
 		"remoteExtPath": "AspaklaryaImages/resources"
