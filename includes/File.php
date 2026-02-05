@@ -14,20 +14,6 @@ use Wikimedia\Rdbms\ILoadBalancer;
 
 class File {
 
-    public const IMAGES_TABLE = 'ai_images';
-    public const RESTRICTION = 'aspaklaryaimages-manage-status';
-    public const NETFREE_KNOWN_POSITION = 0;
-    public const NETFREE_KNOWN_BIT = 1 << self::NETFREE_KNOWN_POSITION;
-    public const NETFREE_OPEN_POSITION = 1;
-    public const NETFREE_OPEN_BIT = 1 << self::NETFREE_OPEN_POSITION;
-
-    public const AUTHORIZED_KNOWN_POSITION = 2;
-    public const AUTHORIZED_KNOWN_BIT = 1 << self::AUTHORIZED_KNOWN_POSITION;
-    public const AUTHORIZED_OPEN_POSITION = 3;
-    public const AUTHORIZED_OPEN_BIT = 1 << self::AUTHORIZED_OPEN_POSITION;
-
-    public const CACHE_TIME = 3600 * 24 * 30;
-
     private Title $title;
     private ILoadBalancer $loadBalancer;
     private WANObjectCache $cache;
@@ -55,7 +41,7 @@ class File {
 
     public function loadStatusBits( bool $useCache = true ): self {
         if( $useCache ) {
-            $this->statusBits = $this->cache->getWithSetCallback( $this->cacheKey, self::CACHE_TIME, function() {
+            $this->statusBits = $this->cache->getWithSetCallback( $this->cacheKey, Constants::IMAGE_CACHE_TIME, function() {
                 return $this->getFromDb();
             } );
             return $this;
@@ -67,15 +53,15 @@ class File {
     public function getFromDb( $db = DB_REPLICA ): int {
         $dbConn = $this->loadBalancer->getConnection( $db );
         $row = $dbConn->newSelectQueryBuilder()
-            ->select( [ 'ai_status' ] )
-            ->from( self::IMAGES_TABLE )
-            ->where( [ 'ai_image_title' => $this->title->getDBKey() ] )
+            ->select( [ Constants::IMAGE_TABLE_STATUS_FIELD ] )
+            ->from( Constants::IMAGES_TABLE )
+            ->where( [ Constants::IMAGE_TABLE_TITLE_FIELD => $this->title->getDBKey() ] )
             ->caller( __METHOD__ )
             ->fetchRow();
         if ( $row === false ) {
            return 0;
         } 
-        return (int)$row->ai_status;
+        return (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD};
         
     }
 
@@ -88,58 +74,43 @@ class File {
         return $this->statusBits;
     }
 
-    private function isNetfreeKnown( int|null $bit = null ): bool {
-        return $bit === null ? ( $this->statusBits & self::NETFREE_KNOWN_BIT ) !== 0 : ( $bit & self::NETFREE_KNOWN_BIT ) !== 0;
-    }
-
-    private function isNetfreeOpen( int|null $bit = null ): bool {
-        return $bit === null ? ( $this->statusBits & self::NETFREE_OPEN_BIT ) !== 0 : ( $bit & self::NETFREE_OPEN_BIT ) !== 0;
-    }
-
-    private function isAuthorizedKnown( int|null $bit = null ): bool {
-        return $bit === null ? ( $this->statusBits & self::AUTHORIZED_KNOWN_BIT ) !== 0 : ( $bit & self::AUTHORIZED_KNOWN_BIT ) !== 0;
-    }
-
-    private function isAuthorizedOpen( int|null $bit = null ): bool {
-        return $bit === null ? ( $this->statusBits & self::AUTHORIZED_OPEN_BIT ) !== 0 : ( $bit & self::AUTHORIZED_OPEN_BIT ) !== 0;
-    }
-
     public function getNetfreeStatus(): ?bool {
-        if ( !$this->isNetfreeKnown() ) {
+        if ( !Constants::isNetfreeKnown( $this->statusBits ) ) {
             return null;
         }
-        return $this->isNetfreeOpen();
+        return Constants::isNetfreeOpen( $this->statusBits );
     }
 
     public function getAuthorizedStatus(): ?bool {
-        if ( !$this->isAuthorizedKnown() ) {
+        if ( !Constants::isAuthorizedKnown( $this->statusBits ) ) {
             return null;
         }
-        return $this->isAuthorizedOpen();
+        return Constants::isAuthorizedOpen( $this->statusBits );
     }
 
     public function setNetfreeStatus ( bool $open ): self {
-        $this->statusBits |= self::NETFREE_KNOWN_BIT;
+        $this->statusBits |= Constants::NETFREE_KNOWN_BIT;
         if ( $open ) {
-            $this->statusBits |= self::NETFREE_OPEN_BIT;
+            $this->statusBits |= Constants::NETFREE_OPEN_BIT;
         } else {
-            $this->statusBits &= ~self::NETFREE_OPEN_BIT;
+            $this->statusBits &= ~Constants::NETFREE_OPEN_BIT;
         }
         return $this;
     }
+
     public function setAuthorizedStatus ( bool $open ): self{
-        $this->statusBits |= self::AUTHORIZED_KNOWN_BIT;
+        $this->statusBits |= Constants::AUTHORIZED_KNOWN_BIT;
 
         if ( $open ) {
-            $this->statusBits |= self::AUTHORIZED_OPEN_BIT;
+            $this->statusBits |= Constants::AUTHORIZED_OPEN_BIT;
         } else {
-            $this->statusBits &= ~self::AUTHORIZED_OPEN_BIT;
+            $this->statusBits &= ~Constants::AUTHORIZED_OPEN_BIT;
         }
         return $this;
     }
 
     public function updateStatus( User $performer ): Status {
-        if ( !$performer->isAllowed( self::RESTRICTION ) ) {
+        if ( !$performer->isAllowed( Constants::RESTRICTION ) ) {
             return Status::newFatal( wfMessage( 'aspaklaryaimages-manage-status-unauthorized' ) );
         }
         return $this->saveStatus( $this->statusBits, $performer );
@@ -152,7 +123,7 @@ class File {
 			return Status::newFatal( wfMessage( 'readonlytext', $readOnlyMode->getReason() ) );
 		}
 
-        if ( !self::isValidBits( $newStatusBits ) ) {
+        if ( !Constants::isValidBits( $newStatusBits ) ) {
             throw new RuntimeException( "unable to set $newStatusBits as it is not valid" );
         }
 
@@ -164,9 +135,9 @@ class File {
         $oldStatusBits = 0;
 
         $currentStatus = $db->newSelectQueryBuilder()
-            ->select( [ 'ai_id', 'ai_status' ] )
-            ->from( 'ai_images' )
-            ->where( [ 'ai_image_title' => $this->title->getDBKey() ] )
+            ->select( [ Constants::IMAGE_TABLE_ID_FIELD, Constants::IMAGE_TABLE_STATUS_FIELD ] )
+            ->from( Constants::IMAGES_TABLE )
+            ->where( [ Constants::IMAGE_TABLE_TITLE_FIELD => $this->title->getDBKey() ] )
             ->caller( __METHOD__ )
             ->fetchRow();
         
@@ -175,22 +146,22 @@ class File {
                 return Status::newGood();
             }
             $newRow = true;
-            if ( $this->isNetfreeKnown( $newStatusBits ) ) {
+            if ( Constants::isNetfreeKnown( $newStatusBits ) ) {
                 $netfreeChange = true;
             }
-            if ( $this->isAuthorizedKnown( $newStatusBits ) ) {
+            if ( Constants::isAuthorizedKnown( $newStatusBits ) ) {
                 $statusChange = true;
             }
         } else {
-            $oldStatusBits = (int)$currentStatus->ai_status;
+            $oldStatusBits = (int)$currentStatus->{Constants::IMAGE_TABLE_STATUS_FIELD};
             $changedBits = $oldStatusBits ^ $newStatusBits;
             if ( $changedBits === 0 ) {
                 return Status::newGood();
             }
-            if ( ( ( $changedBits & self::NETFREE_KNOWN_BIT ) !== 0 ) || (  ( $changedBits & self::NETFREE_OPEN_BIT ) !== 0 ) ) {
+            if ( ( ( $changedBits & Constants::NETFREE_KNOWN_BIT ) !== 0 ) || (  ( $changedBits & Constants::NETFREE_OPEN_BIT ) !== 0 ) ) {
                 $netfreeChange = true;
             }
-            if ( ( ( $changedBits & self::AUTHORIZED_KNOWN_BIT ) !== 0) || ( ( $changedBits & self::AUTHORIZED_OPEN_BIT ) !== 0 ) ) {
+            if ( ( ( $changedBits & Constants::AUTHORIZED_KNOWN_BIT ) !== 0) || ( ( $changedBits & Constants::AUTHORIZED_OPEN_BIT ) !== 0 ) ) {
                 $statusChange = true;
             }
             if ( !$netfreeChange && !$statusChange ) {
@@ -203,43 +174,43 @@ class File {
         $logs = [];
         if ( $newRow ) {
             $db->insert( 
-                self::IMAGES_TABLE, 
-                [ 'ai_image_title' => $this->title->getDBKey(), 'ai_status' => $newStatusBits ], 
+                Constants::IMAGES_TABLE, 
+                [ Constants::IMAGE_TABLE_TITLE_FIELD => $this->title->getDBKey(), Constants::IMAGE_TABLE_STATUS_FIELD => $newStatusBits ], 
                 __METHOD__ 
             );
             $newId = $db->insertId();
             $logType = 'insert';
-            $logs[] = $this->publishLog( $logType, '', $performer, [ 'ai_id' => $newId ] );
-            if ( $this->isNetfreeKnown( $newStatusBits ) ) {
-                $logParameters['netfree'] = $this->isNetfreeOpen( $newStatusBits ) ? 'open' : 'blocked';
+            $logs[] = $this->publishLog( $logType, '', $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
+            if ( Constants::isNetfreeKnown( $newStatusBits ) ) {
+                $logParameters['netfree'] = Constants::isNetfreeOpen( $newStatusBits ) ? 'open' : 'blocked';
             }
-            if ( $this->isAuthorizedKnown( $newStatusBits ) ) {
-                $logParameters['authorized'] = $this->isAuthorizedOpen( $newStatusBits ) ? 'open' : 'blocked';
+            if ( Constants::isAuthorizedKnown( $newStatusBits ) ) {
+                $logParameters['authorized'] = Constants::isAuthorizedOpen( $newStatusBits ) ? 'open' : 'blocked';
             }
         } else {
             $db->delete(
-                self::IMAGES_TABLE,
-                [ 'ai_id' => $currentStatus->ai_id ],
+                Constants::IMAGES_TABLE,
+                [ Constants::IMAGE_TABLE_ID_FIELD => $currentStatus->{Constants::IMAGE_TABLE_ID_FIELD} ],
                 __METHOD__,
             );
             if ( $newStatusBits !== 0 ) {
                 $db->insert( 
-                    self::IMAGES_TABLE, 
-                    [ 'ai_image_title' => $this->title->getDBKey(), 'ai_status' => $newStatusBits ], 
+                    Constants::IMAGES_TABLE, 
+                    [ Constants::IMAGE_TABLE_TITLE_FIELD => $this->title->getDBKey(), Constants::IMAGE_TABLE_STATUS_FIELD => $newStatusBits ], 
                     __METHOD__ 
                 );
                 $newId = $db->insertId();
                 $logType = 'update';
                 if ( $netfreeChange ) {
-                    if ( $this->isNetfreeKnown( $newStatusBits ) ) {
-                        $logParameters['netfree'] = $this->isNetfreeOpen( $newStatusBits ) ? 'open' : 'blocked';
+                    if ( Constants::isNetfreeKnown( $newStatusBits ) ) {
+                        $logParameters['netfree'] = Constants::isNetfreeOpen( $newStatusBits ) ? 'open' : 'blocked';
                     } else {
                         $logParameters['netfree'] = 'removed';
                     }
                 }
                 if ( $statusChange ) {
-                    if ( $this->isAuthorizedKnown( $newStatusBits ) ) {
-                        $logParameters['authorized'] = $this->isAuthorizedOpen( $newStatusBits ) ? 'open' : 'blocked';
+                    if ( Constants::isAuthorizedKnown( $newStatusBits ) ) {
+                        $logParameters['authorized'] = Constants::isAuthorizedOpen( $newStatusBits ) ? 'open' : 'blocked';
                     } else {
                         $logParameters['authorized'] = 'removed';
                     }
@@ -251,7 +222,7 @@ class File {
         }
         
         foreach ( $logParameters as $key => $value ) {
-            $logs[] = $this->publishLog( 'update', "$key-$value", $performer, [ 'ai_id' => $newId ] );
+            $logs[] = $this->publishLog( 'update', "$key-$value", $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
         }
         $this->invalidateCache();
         return Status::newGood( $logs );
@@ -275,10 +246,5 @@ class File {
         $this->cache->delete( $this->cacheKey );
     }
 
-    private static function isValidBits( int $bits ):bool {
-        return ( 
-            ( ( $bits & self::NETFREE_KNOWN_BIT ) !== 0 || ( $bits & self::NETFREE_OPEN_BIT ) === 0 ) && 
-            ( ( $bits & self::AUTHORIZED_KNOWN_BIT ) !== 0 || ( $bits & self::AUTHORIZED_OPEN_BIT ) === 0 ) 
-        );
-    }
+    
 }
