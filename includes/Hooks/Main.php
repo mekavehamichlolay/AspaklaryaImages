@@ -4,13 +4,18 @@ namespace MediaWiki\Extension\AspaklaryaImages\Hooks;
 
 use MediaWiki\Hook\ImageBeforeProduceHTMLHook;
 use MediaWiki\Extension\AspaklaryaImages\File;
+use MediaWiki\Extension\AspaklaryaImages\TraditionalImageGallery;
+use MediaWiki\Hook\AfterParserFetchFileAndTitleHook;
+use MediaWiki\Hook\GalleryGetModesHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
+use MediaWiki\Parser\Parser;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
+use MediaWiki\Title\Title;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
 
-class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPreferencesHook {
+class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPreferencesHook, AfterParserFetchFileAndTitleHook, GalleryGetModesHook {
 	private Array $availableOptions = [ 'unknown', 'blocked' ];
 
     public function __construct( private ILoadBalancer $loadBalancer, private WANObjectCache $cache ) {
@@ -79,7 +84,31 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 	public function onImageBeforeProduceHTML( $unused, &$title, &$file,
 		&$frameParams, &$handlerParams, &$time, &$res, $parser, &$query, &$widthOption
 	) {
-        $fileClass = new File( $this->loadBalancer, $this->cache, $title );
+        return $this->getImageStatus( $title, $frameParams, $res, $parser );
+    }
+
+	/**
+	 * @param Parser $parser
+	 * @param TraditionalImageGallery $ig
+	 * @param string $html
+	 * @return void
+	 */
+	public function onAfterParserFetchFileAndTitle( $parser, $ig, &$html ) {
+		$removed = false;
+		foreach ( $ig->getImages() as $index => $image ) {
+			if ( !$this->getImageStatus( $image[0], [], '', $parser ) ) {
+				$ig->removeImage( $index );
+				$removed = true;
+			}
+		}
+		if ( $removed ) {
+			$html = $ig->toHTML( );
+		}
+		
+	}
+
+	private function getImageStatus( Title $title, &$frameParams, &$res, Parser $parser ): bool {
+		$fileClass = new File( $this->loadBalancer, $this->cache, $title );
         $netfreeStatus = $fileClass->getNetfreeStatus();
 		$config = MediaWikiServices::getInstance()->getMainConfig();
 		$blockUnknown = (bool)$config->get( 'BlockNetfreeUnknownImages' );
@@ -104,5 +133,11 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
             $frameParams[ 'class' ] .= ' aspaklarya-images-netfree-blocked ';
         } 
         return true;
-    }
+	}
+	/**
+	 * @inheritDoc
+	 */
+	public function onGalleryGetModes( &$modes ) {
+		$modes[ 'traditional' ] = TraditionalImageGallery::class;
+	}
 }

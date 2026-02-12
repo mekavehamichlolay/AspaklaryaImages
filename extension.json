@@ -55,7 +55,9 @@
 	],
 	"Hooks": {
 		"LoadExtensionSchemaUpdates": "schema",
-		"ImageBeforeProduceHTML": "main"
+		"ImageBeforeProduceHTML": "main",
+		"AfterParserFetchFileAndTitle": "main",
+		"GalleryGetModes": "main"
 	},
 	"HookHandlers": {
 		"schema": {
