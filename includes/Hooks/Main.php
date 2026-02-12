@@ -104,16 +104,12 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 		$res = '';
 		foreach ( $ig->getImages() as $index => $image ) {
 			if ( !$this->getImageStatus( $image[0], $frame, $res, $parser ) ) {
-				if ( !is_callable( [ $ig, 'removeImage' ] ) ) {
-					$html = '';
-					return;
-				}
 				$ig->removeImage( $index );
 				$removed = true;
 			}
 		}
 		if ( $removed ) {
-			$html = '';
+			$html = $ig->toHTML();
 		}
 		
 	}
