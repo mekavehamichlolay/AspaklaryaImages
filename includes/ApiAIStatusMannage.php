@@ -88,7 +88,7 @@ class ApiAIStatusMannage extends ApiBase {
 	 */
 	public function getExamplesMessages() {
 		return [
-				'action=aspaklaryaimages-manage-status&titles=Example.jpg&authorized=good&netfree=blocked' => 'apihelp-aspaklaryaimages-manage-status-example-1',
+				'action=aspaklaryaimages-manage-status&titles=Example.jpg&authorized=open&netfree=blocked' => 'apihelp-aspaklaryaimages-manage-status-example-1',
 		];
 	}
 }

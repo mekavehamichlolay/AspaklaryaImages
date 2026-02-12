@@ -15,7 +15,7 @@ class Constants {
     public const RESTRICTION = 'aspaklaryaimages-manage-status';
     
     public const NETFREE_OPTIONS = [ '', 'none', 'open', 'blocked' ];
-    public const AUTHORIZED_OPTIONS = [ '', 'none', 'good', 'bad' ];
+    public const AUTHORIZED_OPTIONS = [ '', 'none', 'open', 'blocked' ];
 
     public const NETFREE_KNOWN_POSITION = 0;
     public const NETFREE_KNOWN_BIT = 1 << self::NETFREE_KNOWN_POSITION;

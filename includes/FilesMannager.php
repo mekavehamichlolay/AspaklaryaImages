@@ -21,12 +21,16 @@ class FilesMannager {
 
     /** @var Title[] */
     private array $titles = [];
-    private const ORDER = [
-            'blocked' => Constants::NETFREE_KNOWN_BIT,
-            'open' => Constants::NETFREE_KNOWN_BIT | Constants::NETFREE_OPEN_BIT,
-            'good' => Constants::AUTHORIZED_KNOWN_BIT | Constants::AUTHORIZED_OPEN_BIT,
-            'bad' => Constants::AUTHORIZED_KNOWN_BIT,
-        ];
+
+    private const NETFREE_ORDER = [
+        'blocked' => Constants::NETFREE_KNOWN_BIT,
+        'open'    => Constants::NETFREE_KNOWN_BIT | Constants::NETFREE_OPEN_BIT,
+    ];
+
+    private const AUTHORIZED_ORDER = [
+        'blocked' => Constants::AUTHORIZED_KNOWN_BIT,
+        'open'    => Constants::AUTHORIZED_KNOWN_BIT | Constants::AUTHORIZED_OPEN_BIT,
+    ];
 
     public function __construct( ILoadBalancer $loadBalancer, WANObjectCache $cache ) {
         $this->loadBalancer = $loadBalancer;
@@ -70,7 +74,7 @@ class FilesMannager {
      * @param Authority $performer
      * @param string[] $titles
      * @param string|null $netfree open|blocked or empty string to leave unchanged, null to delete
-     * @param string|null $authorized good|bad or empty string to leave unchanged, null to delete   
+     * @param string|null $authorized open|blocked or empty string to leave unchanged, null to delete   
      * @return array<string,Status>
      * @throws InvalidArgumentException
      * @throws PermissionsError
@@ -85,10 +89,10 @@ class FilesMannager {
         $delete = $netfree === null && $authorized === null;
         if ( !$delete ) {
             if ( $netfree !== '' ) {
-                $netfreeBit = $netfree !== null ? self::ORDER[ $netfree ] : 0;
+                $netfreeBit = $netfree !== null ? self::NETFREE_ORDER[ $netfree ] : 0;
             }
             if ( $authorized !== '' ) {
-                $authorizedBit = $authorized !== null ? self::ORDER[ $authorized ] : 0;
+                $authorizedBit = $authorized !== null ? self::AUTHORIZED_ORDER[ $authorized ] : 0;
             }
         }
         $self = new self( $loadBalancer, $cache );
@@ -229,7 +233,7 @@ class FilesMannager {
     /**
      * Change only the specific bits related to netfree or authorized, leaving the other bits unchanged.
      * @param int $oldBit The original bit value.
-     * @param int $newBit The new bit value to set (should be one of the values from self::ORDER). note that this should already be shifted to the correct position (1 for netfree, 2 for authorized).
+     * @param int $newBit The new bit value to set (should be one of the values from self::NETFREE_ORDER or self::AUTHORIZED_ORDER, depending on $pos).
      * @param int $pos The position of the bits to change (1 for netfree, 2 for authorized).
      * @return int The modified bit value with only the specified bits changed.
      */
