@@ -4,6 +4,11 @@ namespace MediaWiki\Extension\AspaklaryaImages\Hooks;
 
 use MediaWiki\Hook\ImageBeforeProduceHTMLHook;
 use MediaWiki\Extension\AspaklaryaImages\File;
+use MediaWiki\Extension\AspaklaryaImages\NolinesImageGallery;
+use MediaWiki\Extension\AspaklaryaImages\PackedHoverImageGallery;
+use MediaWiki\Extension\AspaklaryaImages\PackedImageGallery;
+use MediaWiki\Extension\AspaklaryaImages\PackedOverlayImageGallery;
+use MediaWiki\Extension\AspaklaryaImages\SlideshowImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\TraditionalImageGallery;
 use MediaWiki\Hook\AfterParserFetchFileAndTitleHook;
 use MediaWiki\Hook\GalleryGetModesHook;
@@ -99,6 +104,10 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 		$res = '';
 		foreach ( $ig->getImages() as $index => $image ) {
 			if ( !$this->getImageStatus( $image[0], $frame, $res, $parser ) ) {
+				if ( !is_callable( [ $ig, 'removeImage' ] ) ) {
+					$html = '';
+					return;
+				}
 				$ig->removeImage( $index );
 				$removed = true;
 			}
@@ -140,6 +149,14 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 	 * @inheritDoc
 	 */
 	public function onGalleryGetModes( &$modes ) {
-		$modes[ 'traditional' ] = TraditionalImageGallery::class;
+		$modes = [
+				'traditional' => TraditionalImageGallery::class,
+				'nolines' => NolinesImageGallery::class,
+				'packed' => PackedImageGallery::class,
+				'packed-hover' => PackedHoverImageGallery::class,
+				'packed-overlay' => PackedOverlayImageGallery::class,
+				'slideshow' => SlideshowImageGallery::class,
+				];
+
 	}
 }
