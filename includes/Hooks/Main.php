@@ -113,7 +113,7 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 			}
 		}
 		if ( $removed ) {
-			$html = $ig->toHTML( );
+			$html = '';
 		}
 		
 	}
