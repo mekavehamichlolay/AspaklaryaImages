@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\AspaklaryaImages;
 
+use Exception;
 use InvalidArgumentException;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\FileRepo\File\File;
@@ -102,109 +103,120 @@ class FilesMannager {
         }
 
         $con = $self->loadBalancer->getConnection( DB_PRIMARY );
-        $resultSet = $con->newSelectQueryBuilder()
-            ->select( [ Constants::IMAGE_TABLE_ID_FIELD, Constants::IMAGE_TABLE_TITLE_FIELD, Constants::IMAGE_TABLE_STATUS_FIELD ] )
-            ->from( Constants::IMAGES_TABLE )
-            ->where( [ Constants::IMAGE_TABLE_TITLE_FIELD => $con->makeList( array_keys( $names ) ) ] )
-            ->caller( __METHOD__ )
-            ->fetchResultSet();
 
-            /** @var array<int,array<string,string>> */
-        $current = [];
-        foreach ( $resultSet as $row ) {
-            if ( $delete ) {
-                $current[ $row->{Constants::IMAGE_TABLE_ID_FIELD} ] = $row->{Constants::IMAGE_TABLE_TITLE_FIELD};
-                continue;
-            }
-            $current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ] ??= [];
-            $current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ][  $row->{Constants::IMAGE_TABLE_ID_FIELD} ] = $row->{Constants::IMAGE_TABLE_TITLE_FIELD};
-            unset( $names[ $row->{Constants::IMAGE_TABLE_TITLE_FIELD} ] );
-        }
-
-        if ( !$performer->authorizeAction( Constants::RESTRICTION ) ) {
-            throw new PermissionsError( Constants::RESTRICTION );
-        }
-        
         $transaction = $con->startAtomic( __METHOD__, $con::ATOMIC_CANCELABLE );
-        if ( $delete ) {
-            if ( count( $current ) === 0 ) {
-                return [ Status::newGood( 'No entries found for the specified titles' ) ];
-            }
-            $con->newDeleteQueryBuilder()
-                ->delete( Constants::IMAGES_TABLE )
-                ->where( [ Constants::IMAGE_TABLE_ID_FIELD => $con->makeList( array_keys( $current ) ) ] )
+        $success = false;
+        
+        try {
+            $resultSet = $con->newSelectQueryBuilder()
+                ->forUpdate()
+                ->select( [ Constants::IMAGE_TABLE_ID_FIELD, Constants::IMAGE_TABLE_TITLE_FIELD, Constants::IMAGE_TABLE_STATUS_FIELD ] )
+                ->from( Constants::IMAGES_TABLE )
+                ->where( [ Constants::IMAGE_TABLE_TITLE_FIELD => $con->makeList( array_keys( $names ) ) ] )
                 ->caller( __METHOD__ )
-                ->execute();
-            if ( $con->affectedRows() < count( $current ) ) {
-                $con->cancelAtomic( __METHOD__, $transaction );
-                return [ Status::newFatal( 'Failed to delete all specified entries' ) ];
-            }
-            $con->endAtomic( __METHOD__ );
-            return array_fill_keys( array_values( $current ), Status::newGood( ) );
-        }
-        $newData = [];
-        if ( count( $names) > 0 ) {
-            $newData[ ($netfreeBit ?? 0) | ($authorizedBit ?? 0) ] = array_keys( $names );
-        }
-        $existingBits = array_keys( $current );
-        $changedBits = [];
-        $toDelete = [];
-        foreach ( $existingBits as $bit ) {
-            if ( $netfreeBit !== null ) {
-                $newBit = self::changeOnlySpecificBits( $bit, $netfreeBit, 1 );
-            }
-            if ( $authorizedBit !== null ) {
-                $newBit = self::changeOnlySpecificBits( $newBit ?? $bit, $authorizedBit, 2 );
-            }
-            if ( $newBit !== $bit ) {
-                if ( $newBit === 0 ) {
-                    $toDelete += array_keys( $current[ $bit ] );
+                ->fetchResultSet();
+    
+            /** @var array<int,array<string,string>> */
+            $current = [];
+            foreach ( $resultSet as $row ) {
+                if ( $delete ) {
+                    $current[ $row->{Constants::IMAGE_TABLE_ID_FIELD} ] = $row->{Constants::IMAGE_TABLE_TITLE_FIELD};
                     continue;
                 }
-                $changedBits[ $bit ] = $newBit;
-                $newData[ $newBit ] ??= [];
-                $newData[ $newBit ] += array_values( $current[ $bit ] );
+                $current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ] ??= [];
+                $current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ][  $row->{Constants::IMAGE_TABLE_ID_FIELD} ] = $row->{Constants::IMAGE_TABLE_TITLE_FIELD};
+                unset( $names[ $row->{Constants::IMAGE_TABLE_TITLE_FIELD} ] );
             }
-        }   
-        
-        foreach ( $changedBits as $bit => $_ ) {
-            $toDelete += array_keys( $current[ $bit ] );
-        }
-        if ( count( $toDelete ) > 0 ) {
-             $con->newDeleteQueryBuilder()
-                ->delete( Constants::IMAGES_TABLE )
-                ->where( [ Constants::IMAGE_TABLE_ID_FIELD => $con->makeList( $toDelete ) ] )
+    
+            if ( !$performer->authorizeAction( Constants::RESTRICTION ) ) {
+                throw new PermissionsError( Constants::RESTRICTION );
+            }
+            
+            if ( $delete ) {
+                if ( count( $current ) === 0 ) {
+                    $success = true;
+                    return [ Status::newGood( 'No entries found for the specified titles' ) ];
+                }
+                $con->newDeleteQueryBuilder()
+                    ->delete( Constants::IMAGES_TABLE )
+                    ->where( [ Constants::IMAGE_TABLE_ID_FIELD => $con->makeList( array_keys( $current ) ) ] )
+                    ->caller( __METHOD__ )
+                    ->execute();
+                if ( $con->affectedRows() < count( $current ) ) {
+                    return [ Status::newFatal( 'Failed to delete all specified entries' ) ];
+                }
+                $success = true;
+                return array_fill_keys( array_values( $current ), Status::newGood( ) );
+            }
+            $newData = [];
+            if ( count( $names) > 0 ) {
+                $newData[ ($netfreeBit ?? 0) | ($authorizedBit ?? 0) ] = array_keys( $names );
+            }
+            $existingBits = array_keys( $current );
+            $changedBits = [];
+            $toDelete = [];
+            foreach ( $existingBits as $bit ) {
+                if ( $netfreeBit !== null ) {
+                    $newBit = self::changeOnlySpecificBits( $bit, $netfreeBit, 1 );
+                }
+                if ( $authorizedBit !== null ) {
+                    $newBit = self::changeOnlySpecificBits( $newBit ?? $bit, $authorizedBit, 2 );
+                }
+                if ( $newBit !== $bit ) {
+                    if ( $newBit === 0 ) {
+                        $toDelete += array_keys( $current[ $bit ] );
+                        continue;
+                    }
+                    $changedBits[ $bit ] = $newBit;
+                    $newData[ $newBit ] ??= [];
+                    $newData[ $newBit ] += array_values( $current[ $bit ] );
+                }
+            }   
+            
+            foreach ( $changedBits as $bit => $_ ) {
+                $toDelete += array_keys( $current[ $bit ] );
+            }
+            if ( count( $toDelete ) > 0 ) {
+                 $con->newDeleteQueryBuilder()
+                    ->delete( Constants::IMAGES_TABLE )
+                    ->where( [ Constants::IMAGE_TABLE_ID_FIELD => $con->makeList( $toDelete ) ] )
+                    ->caller( __METHOD__ )
+                    ->execute();
+                if ( $con->affectedRows() < count( $toDelete ) ) {
+                    return [ Status::newFatal( 'Failed to delete all specified entries' ) ];
+                }
+            }
+            if ( count( $newData ) === 0 ) {
+                $success = true;
+                return array_fill_keys( array_values( array_merge( ...array_values($current) ) ), Status::newGood( ) );
+            }
+            $toSet = [];
+            foreach ( $newData as $bit => $titles ) {
+                foreach ( $titles as $title ) {
+                    $toSet[] = [
+                        Constants::IMAGE_TABLE_TITLE_FIELD => $title,
+                        Constants::IMAGE_TABLE_STATUS_FIELD => $bit,
+                    ];
+                }
+            }
+            $con->newInsertQueryBuilder()
+                ->insert( Constants::IMAGES_TABLE )
+                ->set( $toSet )
                 ->caller( __METHOD__ )
                 ->execute();
-            if ( $con->affectedRows() < count( $toDelete ) ) {
+            if ( $con->affectedRows() < count( $toSet ) ) {
+                return [ Status::newFatal( 'Failed to insert all specified entries' ) ];
+            }
+            $success = true;
+            return array_fill_keys( array_values( array_merge( ...array_values($newData) ) ), Status::newGood( ) );
+            
+        } finally {
+            if ( $success ) {
+                $con->endAtomic( __METHOD__ );
+            } else {
                 $con->cancelAtomic( __METHOD__, $transaction );
-                return [ Status::newFatal( 'Failed to delete all specified entries' ) ];
             }
         }
-        if ( count( $newData ) === 0 ) {
-            $con->endAtomic( __METHOD__ );
-            return array_fill_keys( array_values( array_merge( ...array_values($current) ) ), Status::newGood( ) );
-        }
-        $toSet = [];
-        foreach ( $newData as $bit => $titles ) {
-            foreach ( $titles as $title ) {
-                $toSet[] = [
-                    Constants::IMAGE_TABLE_TITLE_FIELD => $title,
-                    Constants::IMAGE_TABLE_STATUS_FIELD => $bit,
-                ];
-            }
-        }
-        $con->newInsertQueryBuilder()
-            ->insert( Constants::IMAGES_TABLE )
-            ->set( $toSet )
-            ->caller( __METHOD__ )
-            ->execute();
-        if ( $con->affectedRows() < count( $toSet ) ) {
-            $con->cancelAtomic( __METHOD__, $transaction );
-            return [ Status::newFatal( 'Failed to insert all specified entries' ) ];
-        }
-        $con->endAtomic( __METHOD__ );
-        return array_fill_keys( array_values( array_merge( ...array_values($newData) ) ), Status::newGood( ) );
 
     }
 
