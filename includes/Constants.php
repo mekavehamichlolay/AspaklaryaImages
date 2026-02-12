@@ -16,14 +16,14 @@ class Constants {
     public const AUTHORIZED_OPTIONS = [ 'none', 'good', 'bad' ];
 
     public const NETFREE_KNOWN_POSITION = 0;
-    public const NETFREE_KNOWN_BIT = 1 << self::NETFREE_KNOWN_POSITION;
+    public const int NETFREE_KNOWN_BIT = 1 << self::NETFREE_KNOWN_POSITION;
     public const NETFREE_OPEN_POSITION = 1;
-    public const NETFREE_OPEN_BIT = 1 << self::NETFREE_OPEN_POSITION;
+    public const int NETFREE_OPEN_BIT = 1 << self::NETFREE_OPEN_POSITION;
 
     public const AUTHORIZED_KNOWN_POSITION = 2;
-    public const AUTHORIZED_KNOWN_BIT = 1 << self::AUTHORIZED_KNOWN_POSITION;
+    public const int AUTHORIZED_KNOWN_BIT = 1 << self::AUTHORIZED_KNOWN_POSITION;
     public const AUTHORIZED_OPEN_POSITION = 3;
-    public const AUTHORIZED_OPEN_BIT = 1 << self::AUTHORIZED_OPEN_POSITION;
+    public const int AUTHORIZED_OPEN_BIT = 1 << self::AUTHORIZED_OPEN_POSITION;
 
     public const IMAGE_CACHE_TIME = 3600 * 24 * 30;
 
