@@ -2,11 +2,8 @@
 
 namespace MediaWiki\Extension\AspaklaryaImages;
 
-use MediaWiki;
 use MediaWiki\Api\ApiBase;
-use MediaWiki\FileRepo\File\File;
 use MediaWiki\MediaWikiServices;
-use MediaWiki\Permissions\PermissionStatus;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiAIStatusMannage extends ApiBase {
