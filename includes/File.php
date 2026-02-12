@@ -120,7 +120,7 @@ class File {
 
     public function updateStatus( User $performer ): Status {
         if ( !$performer->isAllowed( Constants::RESTRICTION ) ) {
-            return Status::newFatal( wfMessage( 'aspaklaryaimages-manage-status-unauthorized' ) );
+            return Status::newFatal( wfMessage( 'aspaklaryaimages-permissiondenied' ) );
         }
         return $this->saveStatus( $this->statusBits, $performer );
     }
@@ -254,6 +254,4 @@ class File {
         }
         $this->cache->delete( $this->cacheKey );
     }
-
-    
 }

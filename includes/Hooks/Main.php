@@ -146,13 +146,12 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 	 */
 	public function onGalleryGetModes( &$modes ) {
 		$modes = [
-				'traditional' => TraditionalImageGallery::class,
-				'nolines' => NolinesImageGallery::class,
-				'packed' => PackedImageGallery::class,
-				'packed-hover' => PackedHoverImageGallery::class,
-				'packed-overlay' => PackedOverlayImageGallery::class,
-				'slideshow' => SlideshowImageGallery::class,
-				];
-
+			'traditional' => TraditionalImageGallery::class,
+			'nolines' => NolinesImageGallery::class,
+			'packed' => PackedImageGallery::class,
+			'packed-hover' => PackedHoverImageGallery::class,
+			'packed-overlay' => PackedOverlayImageGallery::class,
+			'slideshow' => SlideshowImageGallery::class,
+		];
 	}
 }

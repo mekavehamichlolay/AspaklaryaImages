@@ -25,10 +25,10 @@ class ApiAIStatusMannage extends ApiBase {
 			$this->dieWithError( 'apierror-aspaklaryaimages-missingparams' );
 		}
 		if ( count( $this->titles ) > 50 ) {
-			$this->dieWithError( 'apierror-aspaklaryaimages-param-titles-toolarge' );
+			$this->dieWithError( 'apierror-aspaklaryaimages-toomanyvalues' );
 		}
 		if ( !$this->getAuthority()->isAllowed( Constants::RESTRICTION ) ) {
-			$this->dieWithError( 'apierror-aspaklaryaimages-manage-status-unauthorized' );
+			$this->dieWithError( 'apierror-aspaklaryaimages-permissiondenied' );
 		}
 		$netfree = $params['netfree'];
 		$authorized = $params['authorized'];
@@ -86,14 +86,9 @@ class ApiAIStatusMannage extends ApiBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function getExamples() {
+	public function getExamplesMessages() {
 		return [
-			'api.php?action=aspaklaryaimages-status&token=TOKEN&titles=Example.jpg&authorized=good&netfree=open' => 'apihelp-aspaklaryaimages-status-example-1'
+				'action=aspaklaryaimages-manage-status&titles=Example.jpg&authorized=good&netfree=blocked' => 'apihelp-aspaklaryaimages-manage-status-example-1',
 		];
 	}
-
-	public function getHelpUrls() {
-		return [ '' ];
-	}
-
 }
