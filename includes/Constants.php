@@ -29,7 +29,7 @@ class Constants {
 
     public const IMAGE_CACHE_TIME = 3600 * 24 * 30;
 
-    public const CACHE_KEY_PREFIX = 'aspaklarya-images';
+    public const CACHE_KEY_PREFIX = 'aspaklaryaimages';
     public const CACHE_KEY_VERSION = 'v1';
 
     public static function makeCacheKey( WANObjectCache $cache, string $title ): string {

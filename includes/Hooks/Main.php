@@ -38,11 +38,11 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 			}
 			$options["aspaklaryaimages-show-$option"] = "-show-$option";
 		}
-		$preferences['aspaklarya-images'] = [
+		$preferences['aspaklaryaimages'] = [
 				'type' => 'multiselect',
-				'label-message' => 'aspaklarya-images-preference-label',
+				'label-message' => 'aspaklaryaimages-preference-label',
 				'options-messages' => $options,
-				'help-message' => 'aspaklarya-images-preference-help',
+				'help-message' => 'aspaklaryaimages-preference-help',
 				'section' => 'aspaklarya/images',
 			];
 	}
@@ -60,7 +60,7 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 		foreach ( $this->availableOptions as $option ) {
 			$right = "aspaklaryaimages-show-$option-images";
 			$class = " ai-preference-hide-$option";
-			$userOption = "aspaklarya-images-show-$option";
+			$userOption = "aspaklaryaimages-show-$option";
 			if ( !$user || !$user->isSafeToLoad() || !$user->isAllowed( $right ) ) {
 				if ( !(bool)$userOptionsLookup->getDefaultOption( $userOption ) ) {
 					$bodyClasses .= $class;
@@ -126,18 +126,18 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
         $authorizedStatus = $fileClass->getAuthorizedStatus();
         if ( $authorizedStatus === false ) {
             $res = '';
-			$parser->addTrackingCategory( 'aspaklarya-images-unauthorized-category' );
+			$parser->addTrackingCategory( 'aspaklaryaimages-unauthorized-category' );
             return false;
         }
         if ( !isset( $frameParams['class'] ) ) {
             $frameParams['class'] = '';
         }
         if ( $netfreeStatus === null ) {
-			$parser->addTrackingCategory( 'aspaklarya-images-netfree-unknown-category' );
-            $frameParams[ 'class' ] .= ' aspaklarya-images-netfree-unknown ';
+			$parser->addTrackingCategory( 'aspaklaryaimages-netfree-unknown-category' );
+            $frameParams[ 'class' ] .= ' aspaklaryaimages-netfree-unknown ';
         } elseif ( !(bool)$netfreeStatus ) {
-			$parser->addTrackingCategory( 'aspaklarya-images-netfree-blocked-category' );
-            $frameParams[ 'class' ] .= ' aspaklarya-images-netfree-blocked ';
+			$parser->addTrackingCategory( 'aspaklaryaimages-netfree-blocked-category' );
+            $frameParams[ 'class' ] .= ' aspaklaryaimages-netfree-blocked ';
         } 
         return true;
 	}
