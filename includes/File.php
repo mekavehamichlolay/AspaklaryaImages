@@ -35,9 +35,18 @@ class File {
         }
         $this->loadBalancer = $loadBalancer;
         $this->cache = $cache;
-        $this->cacheKey = $this->cache->makeKey( 'aspaklarya-images', 'v1', $this->title->getDBKey() );
+        $this->cacheKey = $this->makeCacheKey();
         $this->loadStatusBits();
     }
+
+    private function makeCacheKey(): string {
+        return Constants::makeCacheKey( $this->cache, $this->title->getDBKey() );
+    }
+
+    public function getCacheKey(): string {
+        return $this->cacheKey;
+    }
+
 
     public function loadStatusBits( bool $useCache = true ): self {
         if( $useCache ) {

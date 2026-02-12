@@ -2,8 +2,10 @@
 
 namespace MediaWiki\Extension\AspaklaryaImages;
 
+use MediaWiki;
 use MediaWiki\Api\ApiBase;
 use MediaWiki\FileRepo\File\File;
+use MediaWiki\MediaWikiServices;
 use MediaWiki\Permissions\PermissionStatus;
 use Wikimedia\ParamValidator\ParamValidator;
 
@@ -33,16 +35,15 @@ class ApiAIStatusMannage extends ApiBase {
 		}
 		$netfree = $params['netfree'];
 		$authorized = $params['authorized'];
-		$files = [];
-		$nonsense = [];
-		foreach ( $this->titles as $titleText ) {
-			$title = File::normalizeTitle( $titleText );
-			if ( !$title ) {
-				$nonsense[] = $titleText;
-				continue;
-			}
-			$files[] = $title;
+		$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
+		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
+		$result = FilesMannager::updateMultiStatus( $lb, $cache, $this->getAuthority(), $this->titles, $netfree, $authorized );
+		if ( !$result[0]->isOK() ) {
+			$this->dieWithError( $result[0]->getValue() );
 		}
+		$this->getResult()->addValue( null, 'aspaklarya_images_status', [
+			'updated' => array_keys($result),
+		] );
 
     }
 

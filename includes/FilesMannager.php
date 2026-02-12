@@ -80,7 +80,6 @@ class FilesMannager {
         if ( $netfree === '' && $authorized === '' ) {
             throw new InvalidArgumentException( 'You must set a value for one of $netfree or $authorized' );
         }
-        $results = [];
         $netfreeBit = null; // null means no change, 0 for delete
         $authorizedBit = null; // null means no change, 0 for delete
         $delete = $netfree === null && $authorized === null;
@@ -93,7 +92,13 @@ class FilesMannager {
             }
         }
         $self = new self( $loadBalancer, $cache );
-        $titles = $self->setTitles( $titles );
+        try {
+            $titles = $self->setTitles( $titles );
+        } catch ( InvalidArgumentException $e ) {
+            return [ Status::newFatal( $e->getMessage() ) ];
+        } catch ( RuntimeException $e ) {
+            return [ Status::newFatal( $e->getMessage() ) ];
+        }    
 
         /** @var array<string,bool> */
         $names = [];
@@ -220,6 +225,7 @@ class FilesMannager {
 
     }
 
+    
     /**
      * Change only the specific bits related to netfree or authorized, leaving the other bits unchanged.
      * @param int $oldBit The original bit value.
