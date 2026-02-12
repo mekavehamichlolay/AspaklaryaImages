@@ -6,6 +6,7 @@ use InvalidArgumentException;
 use MediaWiki\Exception\PermissionsError;
 use MediaWiki\FileRepo\File\File;
 use MediaWiki\Permissions\Authority;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
 use RuntimeException;
@@ -45,7 +46,7 @@ class FilesMannager {
             $titles = [];
         }
         if ( count( $titles ) === 0 ) {
-            throw new InvalidArgumentException( 'Title parameter is required' );
+            throw new InvalidArgumentException( 'Titles parameter is required' );
         }
         $titles = array_unique( array_filter( $titles ) );
         foreach ( $titles as $titleText ) {
@@ -67,19 +68,20 @@ class FilesMannager {
      * @param WANObjectCache $cache
      * @param Authority $performer
      * @param string[] $titles
-     * @param string|null $netfree
-     * @param string|null $authorized
-     * @return array<string, Status>
+     * @param string|null $netfree open|blocked or empty string to leave unchanged, null to delete
+     * @param string|null $authorized good|bad or empty string to leave unchanged, null to delete   
+     * @return array<string,Status>
      * @throws InvalidArgumentException
      * @throws PermissionsError
+     * @throws RuntimeException
      */
     public static function updateMultiStatus( ILoadBalancer $loadBalancer, WANObjectCache $cache, Authority $performer, array $titles, string $netfree, string $authorized ): array {
         if ( $netfree === '' && $authorized === '' ) {
             throw new InvalidArgumentException( 'You must set a value for one of $netfree or $authorized' );
         }
         $results = [];
-        $netfreeBit = null;
-        $authorizedBit = null;
+        $netfreeBit = null; // null means no change, 0 for delete
+        $authorizedBit = null; // null means no change, 0 for delete
         $delete = $netfree === null && $authorized === null;
         if ( !$delete ) {
             if ( $netfree !== '' ) {
@@ -91,68 +93,136 @@ class FilesMannager {
         }
         $self = new self( $loadBalancer, $cache );
         $titles = $self->setTitles( $titles );
+
+        /** @var array<string,bool> */
         $names = [];
 
         foreach ( $titles as $title ) {
-            $names[] = $title->getDBkey();
+            $names[ $title->getDBkey() ] = true;
         }
 
         $con = $self->loadBalancer->getConnection( DB_PRIMARY );
         $resultSet = $con->newSelectQueryBuilder()
             ->select( [ Constants::IMAGE_TABLE_ID_FIELD, Constants::IMAGE_TABLE_TITLE_FIELD, Constants::IMAGE_TABLE_STATUS_FIELD ] )
             ->from( Constants::IMAGES_TABLE )
-            ->where( [ Constants::IMAGE_TABLE_TITLE_FIELD => $con->makeList( $names ) ] )
+            ->where( [ Constants::IMAGE_TABLE_TITLE_FIELD => $con->makeList( array_keys( $names ) ) ] )
             ->caller( __METHOD__ )
             ->fetchResultSet();
+
+            /** @var array<int,array<string,string>> */
+        $current = [];
+        foreach ( $resultSet as $row ) {
+            if ( $delete ) {
+                $current[ $row->{Constants::IMAGE_TABLE_ID_FIELD} ] = $row->{Constants::IMAGE_TABLE_TITLE_FIELD};
+                continue;
+            }
+            $current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ] ??= [];
+            $current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ][  $row->{Constants::IMAGE_TABLE_ID_FIELD} ] = $row->{Constants::IMAGE_TABLE_TITLE_FIELD};
+            unset( $names[ $row->{Constants::IMAGE_TABLE_TITLE_FIELD} ] );
+        }
 
         if ( !$performer->authorizeAction( Constants::RESTRICTION ) ) {
             throw new PermissionsError( Constants::RESTRICTION );
         }
-
-        $con->startAtomic( __METHOD__, $con::ATOMIC_CANCELABLE );
-        /** @var array<int,array<string,string>> */
-        $current = [];
-        foreach ( $resultSet as $row ) {
-            $current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ] ??= [];
-            $current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ][  $row->{Constants::IMAGE_TABLE_ID_FIELD} ] = $row->{Constants::IMAGE_TABLE_TITLE_FIELD};
-        }
-        $newBitsToApply = [];
-        if( !$delete ) {
-            $existingBits = array_keys( $current );
-            $changedBits = [];
-            foreach ( $existingBits as $bit ) {
-                if ( $netfreeBit !== null ) {
-                    if ( $netfreeBit === 0 && Constants::isNetfreeKnown( $bit ) ) {
-                        $newBit = $authorizedBit !== null ? ( $netfreeBit | $authorizedBit ) : ( $bit & ~0b11 );
-                        $changedBits[ $newBit ] ??= [];
-                        $changedBits[ $newBit ] +=  $current[ $bit ];
-                        continue;
-                    }
-                    if ( !Constants::isNetfreeKnown( $bit ) || ( ( $bit & Constants::NETFREE_OPEN_BIT ) !== $netfreeBit )  ) {
-                        $changedBits[] = $bit;
-                        continue;
-                    }
-                }
-                if ( $authorizedBit !== null ) {
-                    if ( !Constants::isAuthorizedKnown( $bit ) || ( ( $bit & Constants::AUTHORIZED_OPEN_BIT ) !== $authorizedBit )  ) {
-                        $changedBits[] = $bit;
-                    }
-                }
-            }   
-        }
-
-        if ( count( $current ) > 0 && $delete ) {
+        
+        $transaction = $con->startAtomic( __METHOD__, $con::ATOMIC_CANCELABLE );
+        if ( $delete ) {
+            if ( count( $current ) === 0 ) {
+                return [ Status::newGood( 'No entries found for the specified titles' ) ];
+            }
             $con->newDeleteQueryBuilder()
                 ->delete( Constants::IMAGES_TABLE )
-                ->where( [ Constants::IMAGE_TABLE_ID_FIELD => $con->makeList( array_keys( array_merge( ...$current  ) ) ) ] )
+                ->where( [ Constants::IMAGE_TABLE_ID_FIELD => $con->makeList( array_keys( $current ) ) ] )
                 ->caller( __METHOD__ )
                 ->execute();
             if ( $con->affectedRows() < count( $current ) ) {
-                $con->cancelAtomic( __METHOD__ );
-                return $results;
+                $con->cancelAtomic( __METHOD__, $transaction );
+                return [ Status::newFatal( 'Failed to delete all specified entries' ) ];
+            }
+            $con->endAtomic( __METHOD__ );
+            return array_fill_keys( array_values( $current ), Status::newGood( ) );
+        }
+        $newData = [];
+        if ( count( $names) > 0 ) {
+            $newData[ ($netfreeBit ?? 0) | ($authorizedBit ?? 0) ] = array_keys( $names );
+        }
+        $existingBits = array_keys( $current );
+        $changedBits = [];
+        $toDelete = [];
+        foreach ( $existingBits as $bit ) {
+            if ( $netfreeBit !== null ) {
+                $newBit = self::changeOnlySpecificBits( $bit, $netfreeBit, 1 );
+            }
+            if ( $authorizedBit !== null ) {
+                $newBit = self::changeOnlySpecificBits( $newBit ?? $bit, $authorizedBit, 2 );
+            }
+            if ( $newBit !== $bit ) {
+                if ( $newBit === 0 ) {
+                    $toDelete += array_keys( $current[ $bit ] );
+                    continue;
+                }
+                $changedBits[ $bit ] = $newBit;
+                $newData[ $newBit ] ??= [];
+                $newData[ $newBit ] += array_values( $current[ $bit ] );
+            }
+        }   
+        
+        foreach ( $changedBits as $bit => $_ ) {
+            $toDelete += array_keys( $current[ $bit ] );
+        }
+        if ( count( $toDelete ) > 0 ) {
+             $con->newDeleteQueryBuilder()
+                ->delete( Constants::IMAGES_TABLE )
+                ->where( [ Constants::IMAGE_TABLE_ID_FIELD => $con->makeList( $toDelete ) ] )
+                ->caller( __METHOD__ )
+                ->execute();
+            if ( $con->affectedRows() < count( $toDelete ) ) {
+                $con->cancelAtomic( __METHOD__, $transaction );
+                return [ Status::newFatal( 'Failed to delete all specified entries' ) ];
             }
         }
+        if ( count( $newData ) === 0 ) {
+            $con->endAtomic( __METHOD__ );
+            return array_fill_keys( array_values( array_merge( ...array_values($current) ) ), Status::newGood( ) );
+        }
+        $toSet = [];
+        foreach ( $newData as $bit => $titles ) {
+            foreach ( $titles as $title ) {
+                $toSet[] = [
+                    Constants::IMAGE_TABLE_TITLE_FIELD => $title,
+                    Constants::IMAGE_TABLE_STATUS_FIELD => $bit,
+                ];
+            }
+        }
+        $con->newInsertQueryBuilder()
+            ->insert( Constants::IMAGES_TABLE )
+            ->set( $toSet )
+            ->caller( __METHOD__ )
+            ->execute();
+        if ( $con->affectedRows() < count( $toSet ) ) {
+            $con->cancelAtomic( __METHOD__, $transaction );
+            return [ Status::newFatal( 'Failed to insert all specified entries' ) ];
+        }
+        $con->endAtomic( __METHOD__ );
+        return array_fill_keys( array_values( array_merge( ...array_values($newData) ) ), Status::newGood( ) );
 
-        return $results;
+    }
+
+    /**
+     * Change only the specific bits related to netfree or authorized, leaving the other bits unchanged.
+     * @param int $oldBit The original bit value.
+     * @param int $newBit The new bit value to set (should be one of the values from self::ORDER). note that this should already be shifted to the correct position (1 for netfree, 2 for authorized).
+     * @param int $pos The position of the bits to change (1 for netfree, 2 for authorized).
+     * @return int The modified bit value with only the specified bits changed.
+     */
+    private static function changeOnlySpecificBits( int $oldBit, int $newBit, int $pos ): int {
+        if ( $pos === 1 ) {
+            $tempBit = $oldBit & ~0b11; // Clear netfree bits
+            $tempBit |=  $newBit; // Set new netfree bits
+            return $tempBit & 0x0f;
+        }
+        $tempBit = $oldBit & ~0b1100; // Clear authorized bits
+        $tempBit |= $newBit; // Set new authorized bits
+        return $tempBit & 0x0f;
     }
 }
