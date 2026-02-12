@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AspaklaryaImages\Hooks;
 
-use MediaWiki\Hook\ImageBeforeProduceHTMLHook;
 use MediaWiki\Extension\AspaklaryaImages\File;
 use MediaWiki\Extension\AspaklaryaImages\NolinesImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\PackedHoverImageGallery;
@@ -12,6 +11,7 @@ use MediaWiki\Extension\AspaklaryaImages\SlideshowImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\TraditionalImageGallery;
 use MediaWiki\Hook\AfterParserFetchFileAndTitleHook;
 use MediaWiki\Hook\GalleryGetModesHook;
+use MediaWiki\Hook\ImageBeforeProduceHTMLHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Parser\Parser;
@@ -21,11 +21,10 @@ use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
 
 class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPreferencesHook, AfterParserFetchFileAndTitleHook, GalleryGetModesHook {
-	private Array $availableOptions = [ 'unknown', 'blocked' ];
+	private array $availableOptions = [ 'unknown', 'blocked' ];
 
-    public function __construct( private ILoadBalancer $loadBalancer, private WANObjectCache $cache ) {
-        
-    }
+	public function __construct( private ILoadBalancer $loadBalancer, private WANObjectCache $cache ) {
+	}
 
 	/**
 	 * @inheritDoc
@@ -46,6 +45,7 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 				'section' => 'aspaklarya/images',
 			];
 	}
+
 	/**
 	 * @inheritDoc
 	 */
@@ -78,24 +78,24 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 				$bodyClasses .= $class;
 			}
 		}
-		
+
 		$out->addBodyClasses( $bodyClasses );
 		$out->addModuleStyles( 'ext.aspaklaryaimages.styles' );
 	}
-	
-    /**
+
+	/**
 	 * @inheritDoc
 	 */
 	public function onImageBeforeProduceHTML( $unused, &$title, &$file,
 		&$frameParams, &$handlerParams, &$time, &$res, $parser, &$query, &$widthOption
 	) {
-        return $this->getImageStatus( $title, $frameParams, $res, $parser );
-    }
+		return $this->getImageStatus( $title, $frameParams, $res, $parser );
+	}
 
 	/**
 	 * @param Parser $parser
 	 * @param TraditionalImageGallery $ig
-	 * @param string $html
+	 * @param string &$html
 	 * @return void
 	 */
 	public function onAfterParserFetchFileAndTitle( $parser, $ig, &$html ) {
@@ -111,36 +111,36 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 		if ( $removed ) {
 			$html = $ig->toHTML();
 		}
-		
 	}
 
 	private function getImageStatus( Title $title, &$frameParams, &$res, Parser $parser ): bool {
 		$fileClass = new File( $this->loadBalancer, $this->cache, $title );
-        $netfreeStatus = $fileClass->getNetfreeStatus();
+		$netfreeStatus = $fileClass->getNetfreeStatus();
 		$config = MediaWikiServices::getInstance()->getMainConfig();
 		$blockUnknown = (bool)$config->get( 'BlockNetfreeUnknownImages' );
 		if ( $blockUnknown && !(bool)$netfreeStatus ) {
 			$res = '';
 			return false;
 		}
-        $authorizedStatus = $fileClass->getAuthorizedStatus();
-        if ( $authorizedStatus === false ) {
-            $res = '';
+		$authorizedStatus = $fileClass->getAuthorizedStatus();
+		if ( $authorizedStatus === false ) {
+			$res = '';
 			$parser->addTrackingCategory( 'aspaklaryaimages-unauthorized-category' );
-            return false;
-        }
-        if ( !isset( $frameParams['class'] ) ) {
-            $frameParams['class'] = '';
-        }
-        if ( $netfreeStatus === null ) {
+			return false;
+		}
+		if ( !isset( $frameParams['class'] ) ) {
+			$frameParams['class'] = '';
+		}
+		if ( $netfreeStatus === null ) {
 			$parser->addTrackingCategory( 'aspaklaryaimages-netfree-unknown-category' );
-            $frameParams[ 'class' ] .= ' aspaklaryaimages-netfree-unknown ';
-        } elseif ( !(bool)$netfreeStatus ) {
+			$frameParams[ 'class' ] .= ' aspaklaryaimages-netfree-unknown ';
+		} elseif ( !(bool)$netfreeStatus ) {
 			$parser->addTrackingCategory( 'aspaklaryaimages-netfree-blocked-category' );
-            $frameParams[ 'class' ] .= ' aspaklaryaimages-netfree-blocked ';
-        } 
-        return true;
+			$frameParams[ 'class' ] .= ' aspaklaryaimages-netfree-blocked ';
+		}
+		return true;
 	}
+
 	/**
 	 * @inheritDoc
 	 */

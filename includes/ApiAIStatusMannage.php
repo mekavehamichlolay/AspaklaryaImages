@@ -11,9 +11,9 @@ class ApiAIStatusMannage extends ApiBase {
 	/** @var string[] */
 	private $titles = [];
 
-    public function execute() {
-        $params = $this->extractRequestParams();
-		
+	public function execute() {
+		$params = $this->extractRequestParams();
+
 		$this->titles = $params['titles'];
 		if ( $this->titles !== null && !is_array( $this->titles ) ) {
 			$this->titles = explode( '|', $this->titles );
@@ -39,17 +39,16 @@ class ApiAIStatusMannage extends ApiBase {
 			$this->dieWithError( $result[0]->getValue() );
 		}
 		$this->getResult()->addValue( null, 'aspaklaryaimages-status', [
-			'updated' => array_keys($result),
+			'updated' => array_keys( $result ),
 		] );
+	}
 
-    }
-
-    	/** @inheritDoc */
+		/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'titles' => [
 				ParamValidator::PARAM_TYPE => 'string',
-                ParamValidator::PARAM_ISMULTI => true,
+				ParamValidator::PARAM_ISMULTI => true,
 				ParamValidator::PARAM_ISMULTI_LIMIT1 => 25,
 				ParamValidator::PARAM_ISMULTI_LIMIT2 => 50,
 				ParamValidator::PARAM_REQUIRED => true,
