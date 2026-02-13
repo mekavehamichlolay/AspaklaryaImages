@@ -35,10 +35,7 @@ class ApiAIStatusMannage extends ApiBase {
 		$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$result = FilesMannager::updateMultiStatus( $lb, $cache, $this->getAuthority(), $this->titles, $netfree, $authorized );
-		if ( !$result[0] ) {
-			$this->dieWithError( 'apierror-aspaklaryaimages-invalidresult' );
-		}
-		if (  !$result[0]->isOK()  ) {
+		if ( $result[0] && !$result[0]->isOK() ) {
 			$this->dieWithError( $result[0]->getValue() );
 		}
 		$this->getResult()->addValue( null, 'aspaklaryaimages-status', [
