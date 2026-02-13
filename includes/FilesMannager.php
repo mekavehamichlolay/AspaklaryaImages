@@ -206,7 +206,9 @@ class FilesMannager {
 					];
 				}
 			}
-			
+			if ( count( $toSet ) === 0 ) {
+				return array_fill_keys( array_values( array_merge( ...array_values( $current ) ) ), Status::newFatal("toset value is empty") );
+			}
 			$con->newInsertQueryBuilder()
 				->insert( Constants::IMAGES_TABLE )
 				->set( $toSet )
