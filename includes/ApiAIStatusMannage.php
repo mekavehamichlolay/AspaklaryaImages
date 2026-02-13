@@ -11,9 +11,9 @@ class ApiAIStatusMannage extends ApiBase {
 	/** @var string[] */
 	private $titles = [];
 
-    public function execute() {
-        $params = $this->extractRequestParams();
-		
+	public function execute() {
+		$params = $this->extractRequestParams();
+
 		$this->titles = $params['titles'];
 		if ( $this->titles !== null && !is_array( $this->titles ) ) {
 			$this->titles = explode( '|', $this->titles );
@@ -22,13 +22,13 @@ class ApiAIStatusMannage extends ApiBase {
 		}
 		$this->titles = array_unique( array_filter( $this->titles ) );
 		if ( count( $this->titles ) === 0 ) {
-			$this->dieWithError( 'apierror-aspaklarya_images-missingparams' );
+			$this->dieWithError( 'apierror-aspaklaryaimages-missingparams' );
 		}
 		if ( count( $this->titles ) > 50 ) {
-			$this->dieWithError( 'apierror-aspaklarya_images-param-titles-toolarge' );
+			$this->dieWithError( 'apierror-aspaklaryaimages-toomanyvalues' );
 		}
 		if ( !$this->getAuthority()->isAllowed( Constants::RESTRICTION ) ) {
-			$this->dieWithError( 'apierror-aspaklarya_images-manage-status-unauthorized' );
+			$this->dieWithError( 'apierror-aspaklaryaimages-permissiondenied' );
 		}
 		$netfree = $params['netfree'];
 		$authorized = $params['authorized'];
@@ -38,34 +38,33 @@ class ApiAIStatusMannage extends ApiBase {
 		if ( !$result[0]->isOK() ) {
 			$this->dieWithError( $result[0]->getValue() );
 		}
-		$this->getResult()->addValue( null, 'aspaklarya_images_status', [
-			'updated' => array_keys($result),
+		$this->getResult()->addValue( null, 'aspaklaryaimages-status', [
+			'updated' => array_keys( $result ),
 		] );
+	}
 
-    }
-
-    	/** @inheritDoc */
+		/** @inheritDoc */
 	public function getAllowedParams() {
 		return [
 			'titles' => [
 				ParamValidator::PARAM_TYPE => 'string',
-                ParamValidator::PARAM_ISMULTI => true,
+				ParamValidator::PARAM_ISMULTI => true,
 				ParamValidator::PARAM_ISMULTI_LIMIT1 => 25,
 				ParamValidator::PARAM_ISMULTI_LIMIT2 => 50,
 				ParamValidator::PARAM_REQUIRED => true,
-				ApiBase::PARAM_HELP_MSG => 'apihelp-aspaklarya_images-param-titles',
+				ApiBase::PARAM_HELP_MSG => 'apihelp-aspaklaryaimages-param-titles',
 			],
 			'netfree' => [
 				ParamValidator::PARAM_DEFAULT => 'none',
 				ParamValidator::PARAM_TYPE => Constants::NETFREE_OPTIONS,
 				ParamValidator::PARAM_REQUIRED => false,
-				ApiBase::PARAM_HELP_MSG => 'apihelp-aspaklarya_images-param-netfree',
+				ApiBase::PARAM_HELP_MSG => 'apihelp-aspaklaryaimages-param-netfree',
 			],
 			'authorized' => [
 				ParamValidator::PARAM_DEFAULT => 'none',
 				ParamValidator::PARAM_TYPE => Constants::AUTHORIZED_OPTIONS,
 				ParamValidator::PARAM_REQUIRED => false,
-				ApiBase::PARAM_HELP_MSG => 'apihelp-aspaklarya_images-param-authorized',
+				ApiBase::PARAM_HELP_MSG => 'apihelp-aspaklaryaimages-param-authorized',
 			],
 			'token' => null,
 		];
@@ -86,14 +85,9 @@ class ApiAIStatusMannage extends ApiBase {
 	/**
 	 * @inheritDoc
 	 */
-	public function getExamples() {
+	public function getExamplesMessages() {
 		return [
-			'api.php?action=aspaklarya_images_status&token=TOKEN&titles=Example.jpg&authorized=good&netfree=open' => 'apihelp-aspaklarya_images_status-example-1'
+				'action=aspaklaryaimages-manage-status&titles=Example.jpg&authorized=open&netfree=blocked' => 'apihelp-aspaklaryaimages-manage-status-example-1',
 		];
 	}
-
-	public function getHelpUrls() {
-		return [ '' ];
-	}
-
 }

@@ -4,11 +4,11 @@
 	"version": "2.0",
 	"url": "https://www.mediawiki.org/wiki/Extension:AspaklaryaImages",
 	"author": "[https://www.hamichlol.org.il/משתמש:מקוה מקוה]",
-	"descriptionmsg": "aspaklarya_images-desc",
+	"descriptionmsg": "aspaklaryaimages-desc",
 	"license-name": "GPL-3.0-or-later",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.44.0"
+		"MediaWiki": ">= 1.45.0"
 	},
 	"MessagesDirs": {
 		"AspaklaryaImages": [
@@ -109,12 +109,12 @@
 		}
 	},
 	"TrackingCategories": [
-		"aspaklarya-images-unauthorized-category",
-		"aspaklarya-images-netfree-unknown-category",
-		"aspaklarya-images-netfree-blocked-category"
+		"aspaklaryaimages-unauthorized-category",
+		"aspaklaryaimages-netfree-unknown-category",
+		"aspaklaryaimages-netfree-blocked-category"
 	],
 	"DefaultUserOptions": {
-		"aspaklarya-images-show-unknown": 1,
-		"aspaklarya-images-show-blocked": 0
+		"aspaklaryaimages-show-unknown": 1,
+		"aspaklaryaimages-show-blocked": 0
 	}
 }

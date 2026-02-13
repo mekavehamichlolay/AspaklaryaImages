@@ -1,0 +1,36 @@
+{
+	"@metadata": {
+		"authors": [
+			"Neriah"
+		]
+	},
+	"aspaklaryaimages-desc": "הרחבה לטיפול ובדיקת תמונות במכלול.",
+	"aspaklaryaimages-preference-label": "תמונות",
+	"aspaklaryaimages-preference-help": "הצגת תמונות",
+	"aspaklaryaimages-show-unknown": "צפיה בתמונות עם סטטוס נטפרי לא ידוע",
+	"aspaklaryaimages-show-blocked": "צפיה בתמונות שחסומות בנטפרי",
+	"aspaklaryaimages-permissiondenied": "אין לך הרשאה לנהל את סטטוס התמונות.",
+	"apierror-aspaklaryaimages-missingparams": "לא הוזנה כותרת תקינה",
+	"apierror-aspaklaryaimages-toomanyvalues": "ניתן לעדכן עד 50 תמונות בקריאה אחת.",
+	"apierror-aspaklaryaimages-permissiondenied": "אין לך הרשאה לנהל את סטטוס התמונות.",
+	"apihelp-aspaklaryaimages-param-titles": "רשימת שמות הקבצים לעדכון. מופרדים בקו מאונך (|).",
+	"apihelp-aspaklaryaimages-param-netfree": "סטטוס נטפרי: open (פתוחה), blocked (חסומה), none (מחיקת המידע), או ריק להשארת המצב הקיים.",
+	"apihelp-aspaklaryaimages-param-authorized": "סטטוס מקומי: open (פתוחה), blocked (חסומה), none (מחיקת המידע), או ריק להשארת המצב הקיים.",
+	"apihelp-aspaklaryaimages-status-example-1": "שינוי המידע על קובץ:Example.jpg, כך שיוגדר כחסום בנטפרי אך כשיר להצגה מקומית.",
+
+	"aspaklaryaimages-unauthorized-category": "אספקלריה: דפים עם תמונות חסומות",
+	"aspaklaryaimages-netfree-unknown-category": "אספקלריה: דפים עם תמונות עם סטטוס נטפרי לא ידוע",
+	"aspaklaryaimages-netfree-blocked-category": "אספקלריה: דפים עם תמונות חסומות בנטפרי",
+
+	"action-aspaklaryaimages-manage-status": "לשנות סטטוס תמונות",
+	"action-aspaklaryaimages-show-blocked-images": "להציג תמונות חסומות",
+	"action-aspaklaryaimages-show-unknown-images": "להציג תמונות עם סטטוס נטפרי לא ידוע",
+	"action-aspaklaryaimages-view-status": "לצפות בסטטוס תמונות",
+	"right-aspaklaryaimages-manage-status": "ניהול סטטוס תמונות",
+	"right-aspaklaryaimages-show-blocked-images": "הצגת תמונות חסומות",
+	"right-aspaklaryaimages-show-unknown-images": "הצגת תמונות עם סטטוס נטפרי לא ידוע",
+	"right-aspaklaryaimages-view-status": "צפיה בסטטוס תמונות",
+	"group-imagesconfirmers": "מאשרי תמונות",
+	"group-imagesconfirmers-member": "{{GENDER:$1|מאשר|מאשרת}} תמונות",
+	"grouppage-imagesconfirmers": "{{ns:project}}:מאשרי תמונות"
+}
