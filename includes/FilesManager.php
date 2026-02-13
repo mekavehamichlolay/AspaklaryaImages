@@ -163,11 +163,12 @@ class FilesManager {
 			$changedBits = [];
 			$toDelete = [];
 			foreach ( $existingBits as $bit ) {
+				$newBit = $bit;
 				if ( $netfreeBit !== null ) {
-					$newBit = self::changeOnlySpecificBits( $bit, $netfreeBit, 1 );
+					$newBit = self::changeOnlySpecificBits( $newBit, $netfreeBit, 1 );
 				}
 				if ( $authorizedBit !== null ) {
-					$newBit = self::changeOnlySpecificBits( $newBit ?? $bit, $authorizedBit, 2 );
+					$newBit = self::changeOnlySpecificBits( $newBit, $authorizedBit, 2 );
 				}
 				if ( $newBit !== $bit ) {
 					if ( $newBit === 0 ) {
