@@ -12,7 +12,7 @@ use RuntimeException;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
 
-class FilesMannager {
+class FilesManager {
 
 	private ILoadBalancer $loadBalancer;
 	private WANObjectCache $cache;

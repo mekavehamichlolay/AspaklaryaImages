@@ -16,7 +16,7 @@
 	"apihelp-aspaklaryaimages-param-titles": "רשימת שמות הקבצים לעדכון. מופרדים בקו מאונך (|).",
 	"apihelp-aspaklaryaimages-param-netfree": "סטטוס נטפרי: open (פתוחה), blocked (חסומה), none (מחיקת המידע), או ריק להשארת המצב הקיים.",
 	"apihelp-aspaklaryaimages-param-authorized": "סטטוס מקומי: open (פתוחה), blocked (חסומה), none (מחיקת המידע), או ריק להשארת המצב הקיים.",
-	"apihelp-aspaklaryaimages-status-example-1": "שינוי המידע על קובץ:Example.jpg, כך שיוגדר כחסום בנטפרי אך כשיר להצגה מקומית.",
+	"apihelp-aspaklaryaimages-manage-status-example-1": "שינוי המידע על קובץ:Example.jpg, כך שיוגדר כחסום בנטפרי אך כשיר להצגה מקומית.",
 
 	"aspaklaryaimages-unauthorized-category": "אספקלריה: דפים עם תמונות חסומות",
 	"aspaklaryaimages-netfree-unknown-category": "אספקלריה: דפים עם תמונות עם סטטוס נטפרי לא ידוע",

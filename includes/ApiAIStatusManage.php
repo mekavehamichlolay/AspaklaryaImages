@@ -6,7 +6,7 @@ use MediaWiki\Api\ApiBase;
 use MediaWiki\MediaWikiServices;
 use Wikimedia\ParamValidator\ParamValidator;
 
-class ApiAIStatusMannage extends ApiBase {
+class ApiAIStatusManage extends ApiBase {
 
 	/** @var string[] */
 	private $titles = [];
@@ -34,7 +34,7 @@ class ApiAIStatusMannage extends ApiBase {
 		$authorized = $params['authorized'];
 		$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
-		$result = FilesMannager::updateMultiStatus( $lb, $cache, $this->getAuthority(), $this->titles, $netfree, $authorized );
+		$result = FilesManager::updateMultiStatus( $lb, $cache, $this->getAuthority(), $this->titles, $netfree, $authorized );
 		if ( !$result[0]->isOK() ) {
 			$this->dieWithError( $result[0]->getValue() );
 		}
