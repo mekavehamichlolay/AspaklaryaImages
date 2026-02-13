@@ -78,7 +78,7 @@ class FilesMannager {
 	 * @throws PermissionsError
 	 * @throws RuntimeException
 	 */
-	public static function updateMultiStatus( ILoadBalancer $loadBalancer, WANObjectCache $cache, Authority $performer, array $titles, string $netfree, string $authorized ): array {
+	public static function updateMultiStatus( ILoadBalancer $loadBalancer, WANObjectCache $cache, Authority $performer, array $titles, string|null $netfree, string|null $authorized ): array {
 		if ( $netfree === '' && $authorized === '' ) {
 			throw new InvalidArgumentException( 'You must set a value for one of $netfree or $authorized' );
 		}
