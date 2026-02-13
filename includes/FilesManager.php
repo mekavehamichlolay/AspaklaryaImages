@@ -111,6 +111,10 @@ class FilesManager {
 
 		$con = $self->loadBalancer->getConnection( DB_PRIMARY );
 
+		if ( !$performer->authorizeAction( Constants::RESTRICTION ) ) {
+			throw new PermissionsError( Constants::RESTRICTION );
+		}
+
 		$transaction = $con->startAtomic( __METHOD__, $con::ATOMIC_CANCELABLE );
 		$success = false;
 
@@ -133,10 +137,6 @@ class FilesManager {
 				$current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ] ??= [];
 				$current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ][ $row->{Constants::IMAGE_TABLE_ID_FIELD} ] = $row->{Constants::IMAGE_TABLE_TITLE_FIELD};
 				unset( $names[ $row->{Constants::IMAGE_TABLE_TITLE_FIELD} ] );
-			}
-
-			if ( !$performer->authorizeAction( Constants::RESTRICTION ) ) {
-				throw new PermissionsError( Constants::RESTRICTION );
 			}
 
 			if ( $delete ) {
