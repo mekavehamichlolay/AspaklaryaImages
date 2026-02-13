@@ -207,7 +207,7 @@ class FilesMannager {
 				}
 			}
 			// if ( count( $toSet ) === 0 ) {
-				return [ Status::newFatal(json_encode($toSet))];
+				return $toSet;
 			// }
 			$con->newInsertQueryBuilder()
 				->insert( Constants::IMAGES_TABLE )
