@@ -171,17 +171,17 @@ class FilesMannager {
 				}
 				if ( $newBit !== $bit ) {
 					if ( $newBit === 0 ) {
-						$toDelete += array_keys( $current[ $bit ] );
+						$toDelete = array_merge( $toDelete, array_keys( $current[ $bit ] ) );
 						continue;
 					}
 					$changedBits[ $bit ] = $newBit;
 					$newData[ $newBit ] ??= [];
-					$newData[ $newBit ] += array_values( $current[ $bit ] );
+					$newData[ $newBit ] = array_merge( $newData[ $newBit ], array_values( $current[ $bit ] ) );
 				}
 			}
 
 			foreach ( $changedBits as $bit => $_ ) {
-				$toDelete += array_keys( $current[ $bit ] );
+				$toDelete = array_merge( $toDelete, array_keys( $current[ $bit ] ) );
 			}
 			if ( count( $toDelete ) > 0 ) {
 				 $con->newDeleteQueryBuilder()
@@ -206,6 +206,7 @@ class FilesMannager {
 					];
 				}
 			}
+			
 			$con->newInsertQueryBuilder()
 				->insert( Constants::IMAGES_TABLE )
 				->set( $toSet )
