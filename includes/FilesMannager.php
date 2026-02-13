@@ -11,6 +11,7 @@ use MediaWiki\Title\Title;
 use RuntimeException;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
+use Wikimedia\Rdbms\IReadableDatabase;
 
 class FilesMannager {
 
@@ -113,13 +114,19 @@ class FilesMannager {
 
 		$transaction = $con->startAtomic( __METHOD__, $con::ATOMIC_CANCELABLE );
 		$success = false;
-
+		$con->onTransactionPreCommitOrIdle( function () use ( $titles ) {
+			foreach ( $titles as $title ) {
+				$cacheKey = Constants::makeCacheKey( $this->cache, $title->getDBkey() );
+				$this->cache->delete( $cacheKey );
+			}
+			return true;	
+		} );
 		try {
 			$resultSet = $con->newSelectQueryBuilder()
 				->forUpdate()
 				->select( [ Constants::IMAGE_TABLE_ID_FIELD, Constants::IMAGE_TABLE_TITLE_FIELD, Constants::IMAGE_TABLE_STATUS_FIELD ] )
 				->from( Constants::IMAGES_TABLE )
-				->where( [ Constants::IMAGE_TABLE_TITLE_FIELD => $con->makeList( array_keys( $names ) ) ] )
+				->where( [ Constants::IMAGE_TABLE_TITLE_FIELD => array_keys( $names ) ] )
 				->caller( __METHOD__ )
 				->fetchResultSet();
 
@@ -146,7 +153,7 @@ class FilesMannager {
 				}
 				$con->newDeleteQueryBuilder()
 					->delete( Constants::IMAGES_TABLE )
-					->where( [ Constants::IMAGE_TABLE_ID_FIELD => $con->makeList( array_keys( $current ) ) ] )
+					->where( [ Constants::IMAGE_TABLE_ID_FIELD => array_keys( $current ) ] )
 					->caller( __METHOD__ )
 					->execute();
 				if ( $con->affectedRows() < count( $current ) ) {
@@ -186,7 +193,7 @@ class FilesMannager {
 			if ( count( $toDelete ) > 0 ) {
 				 $con->newDeleteQueryBuilder()
 					->delete( Constants::IMAGES_TABLE )
-					->where( [ Constants::IMAGE_TABLE_ID_FIELD => $con->makeList( $toDelete ) ] )
+					->where( [ Constants::IMAGE_TABLE_ID_FIELD => $toDelete ] )
 					->caller( __METHOD__ )
 					->execute();
 				if ( $con->affectedRows() < count( $toDelete ) ) {
