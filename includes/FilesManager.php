@@ -131,7 +131,7 @@ class FilesManager {
 					continue;
 				}
 				$current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ] ??= [];
-				$current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ][  $row->{Constants::IMAGE_TABLE_ID_FIELD} ] = $row->{Constants::IMAGE_TABLE_TITLE_FIELD};
+				$current[ (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD} ][ $row->{Constants::IMAGE_TABLE_ID_FIELD} ] = $row->{Constants::IMAGE_TABLE_TITLE_FIELD};
 				unset( $names[ $row->{Constants::IMAGE_TABLE_TITLE_FIELD} ] );
 			}
 
@@ -184,7 +184,7 @@ class FilesManager {
 				$toDelete += array_keys( $current[ $bit ] );
 			}
 			if ( count( $toDelete ) > 0 ) {
-				 $con->newDeleteQueryBuilder()
+				$con->newDeleteQueryBuilder()
 					->delete( Constants::IMAGES_TABLE )
 					->where( [ Constants::IMAGE_TABLE_ID_FIELD => $con->makeList( $toDelete ) ] )
 					->caller( __METHOD__ )
@@ -208,7 +208,7 @@ class FilesManager {
 			}
 			$con->newInsertQueryBuilder()
 				->insert( Constants::IMAGES_TABLE )
-				->set( $toSet )
+				->rows( $toSet )
 				->caller( __METHOD__ )
 				->execute();
 			if ( $con->affectedRows() < count( $toSet ) ) {
