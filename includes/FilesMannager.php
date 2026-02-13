@@ -210,8 +210,8 @@ class FilesMannager {
 				// return $toSet;
 			// }
 			$con->newInsertQueryBuilder()
-				->insert( Constants::IMAGES_TABLE )
-				->set( $toSet )
+				->insertInto( Constants::IMAGES_TABLE )
+				->rows( $toSet )
 				->caller( __METHOD__ )
 				->execute();
 			if ( $con->affectedRows() < count( $toSet ) ) {
