@@ -114,7 +114,7 @@ class FilesMannager {
 
 		$transaction = $con->startAtomic( __METHOD__, $con::ATOMIC_CANCELABLE );
 		$success = false;
-		$con->onTransactionPreCommitOrIdle( function () use ( $titles ) {
+		$con->onTransactionResolution( function () use ( $titles ) {
 			foreach ( $titles as $title ) {
 				$cacheKey = Constants::makeCacheKey( $this->cache, $title->getDBkey() );
 				$this->cache->delete( $cacheKey );
