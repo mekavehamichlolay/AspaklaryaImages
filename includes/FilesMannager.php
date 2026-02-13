@@ -207,7 +207,7 @@ class FilesMannager {
 				}
 			}
 			// if ( count( $toSet ) === 0 ) {
-				return $toSet;
+				// return $toSet;
 			// }
 			$con->newInsertQueryBuilder()
 				->insert( Constants::IMAGES_TABLE )
