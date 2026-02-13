@@ -32,6 +32,21 @@ class ApiAIStatusMannage extends ApiBase {
 		}
 		$netfree = $params['netfree'];
 		$authorized = $params['authorized'];
+		if ( $netfree === '' && $authorized === '' ) {
+			$this->dieWithError( 'apierror-aspaklaryaimages-noupdatespecified' );
+		}
+		if ( $netfree !== '' && !in_array( $netfree, Constants::NETFREE_OPTIONS, true ) ) {
+			$this->dieWithError( 'apierror-aspaklaryaimages-invalidnetfreeoption' );
+		}
+		if ( $authorized !== '' && !in_array( $authorized, Constants::AUTHORIZED_OPTIONS, true ) ) {
+			$this->dieWithError( 'apierror-aspaklaryaimages-invalidauthorizedoption' );
+		}
+		if ($netfree === 'none') {
+			$netfree = null;
+		}
+		if ($authorized === 'none') {
+			$authorized = null;
+		}
 		$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$result = FilesMannager::updateMultiStatus( $lb, $cache, $this->getAuthority(), $this->titles, $netfree, $authorized );
