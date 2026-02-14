@@ -170,6 +170,7 @@ class FilesMannager {
 			$changedBits = [];
 			$toDelete = [];
 			foreach ( $existingBits as $bit ) {
+				$newBit = null;
 				if ( $netfreeBit !== null ) {
 					$newBit = self::changeOnlySpecificBits( $bit, $netfreeBit, 1 );
 				}
