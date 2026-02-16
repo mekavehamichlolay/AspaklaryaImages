@@ -21,6 +21,8 @@
 namespace MediaWiki\Extension\AspaklaryaImages;
 
 use ImageGalleryBase;
+use MediaWiki\Html\Html;
+use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -75,7 +77,18 @@ class SpecialUnknownImages extends QueryPage {
 					break;
 				}
 			}
-
+            $out->addHTML( Html::rawElement(
+                'form',
+                [
+                    'id' => 'aspaklaryaimages-netfree-form',
+                    'action' => '',
+                ],
+                Html::rawElement(
+                    'button',
+                    [ 'type' => 'button' ],
+                    $this->msg( 'aspaklaryaimages-submit-button' )->text()
+                )
+            ) );
 			$out->addHTML( $gallery->toHTML() );
 		}
 	}
@@ -111,7 +124,21 @@ class SpecialUnknownImages extends QueryPage {
 	}
 
     protected function getCellHtml( $row ) {
-        return '';
+        $radioButtons = [];
+        foreach ( Constants::NETFREE_OPTIONS as $option ) {
+            $radioButtons[] =  Html::rawElement(
+                    'input',
+                    [
+                        'type' => 'radio',
+                        'name' => "netfree_{$row->title}",
+                        'value' => $option,
+                        'id' => "{$option}-{$row->title}",
+                        'form' => "aspaklaryaimages-netfree-form",
+                        'checked' => $option === 'unknown' ? 'checked' : null,
+                    ]
+            );
+        }
+        return Html::rawElement( 'div', [], $radioButtons );
     }
 }
 
