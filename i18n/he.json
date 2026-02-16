@@ -17,11 +17,9 @@
 	"apihelp-aspaklaryaimages-param-netfree": "סטטוס נטפרי: open (פתוחה), blocked (חסומה), none (מחיקת המידע), או ריק להשארת המצב הקיים.",
 	"apihelp-aspaklaryaimages-param-authorized": "סטטוס מקומי: open (פתוחה), blocked (חסומה), none (מחיקת המידע), או ריק להשארת המצב הקיים.",
 	"apihelp-aspaklaryaimages-status-example-1": "שינוי המידע על קובץ:Example.jpg, כך שיוגדר כחסום בנטפרי אך כשיר להצגה מקומית.",
-
 	"aspaklaryaimages-unauthorized-category": "אספקלריה: דפים עם תמונות חסומות",
 	"aspaklaryaimages-netfree-unknown-category": "אספקלריה: דפים עם תמונות עם סטטוס נטפרי לא ידוע",
 	"aspaklaryaimages-netfree-blocked-category": "אספקלריה: דפים עם תמונות חסומות בנטפרי",
-
 	"action-aspaklaryaimages-manage-status": "לשנות סטטוס תמונות",
 	"action-aspaklaryaimages-show-blocked-images": "להציג תמונות חסומות",
 	"action-aspaklaryaimages-show-unknown-images": "להציג תמונות עם סטטוס נטפרי לא ידוע",
@@ -32,5 +30,10 @@
 	"right-aspaklaryaimages-view-status": "צפיה בסטטוס תמונות",
 	"group-imagesconfirmers": "מאשרי תמונות",
 	"group-imagesconfirmers-member": "{{GENDER:$1|מאשר|מאשרת}} תמונות",
-	"grouppage-imagesconfirmers": "{{ns:project}}:מאשרי תמונות"
+	"grouppage-imagesconfirmers": "{{ns:project}}:מאשרי תמונות",
+	"aspaklaryaimages-option-none": "ללא שינוי",
+	"aspaklaryaimages-option-open": "פתוח",
+	"aspaklaryaimages-option-blocked": "חסום",
+	"unknownfiles": "קבצים עם סטטוס נטפרי לא ידוע",
+	"aspaklaryaimages-submit-button": "עדכן סטטוס"
 }
