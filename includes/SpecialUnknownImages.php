@@ -138,7 +138,7 @@ class SpecialUnknownImages extends QueryPage {
                     ]
             );
         }
-        return Html::rawElement( 'div', [], $radioButtons );
+        return Html::rawElement( 'div', [], implode( '', $radioButtons ) );
     }
 }
 
