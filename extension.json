@@ -84,7 +84,7 @@
 		"AspaklaryaImagesAlias": "AspaklaryaImages.alias.php"
 	},
 	"SpecialPages": {
-		"Aiunknownimages": {
+		"Unknownfiles": {
 			"class": "MediaWiki\\Extension\\AspaklaryaImages\\SpecialUnknownImages",
 			"services": [
 				"ConnectionProvider"

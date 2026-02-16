@@ -34,7 +34,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
 class SpecialUnknownImages extends QueryPage {
 
 	public function __construct( IConnectionProvider $dbProvider ) {
-		parent::__construct( 'Unknownimages', Constants::RESTRICTION, true );
+		parent::__construct( 'Unknownfiles', Constants::RESTRICTION, true );
 		$this->setDatabaseProvider( $dbProvider );
 	}
 

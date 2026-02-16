@@ -13,12 +13,12 @@ $specialPageAliases = [];
  * @author Mekave
  */
 $specialPageAliases['en'] = [
-	'Aiunknownimages' => [ 'Unknown files', 'Unknownfiles', 'UnknownFiles', 'Unknown_files' ],
+	'Unknownfiles' => [ 'Unknown files', 'Unknownfiles', 'UnknownFiles' ],
 ];
 
 /** Hebrew (עברית)
  * @author Mekave
  */
 $specialPageAliases['he'] = [
-	'Aiunknownimages' => [ 'קבצים ללא הגדרה' ],
+	'Unknownfiles' => [ 'קבצים ללא הגדרה' ],
 ];
