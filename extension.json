@@ -119,6 +119,7 @@
 		},
 		"ext.aspaklaryaimages.netfreeUnknown": {
 			"scripts": "ext.aspaklaryaimages.netfreeUnknown.js",
+			"styles": "ext.aspaklaryaimages.netfreeUnknown.css",
 			"dependencies": [
 				"mediawiki.util",
 				"mediawiki.jqueryMsg",

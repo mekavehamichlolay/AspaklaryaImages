@@ -1,0 +1,13 @@
+.netfree-option{
+    display: flex;
+}
+.netfree-option input[type="radio"] {
+    margin-right: 5px;
+}
+.netfree-option label {
+    margin: 0;
+}
+.netfree-option-box{
+    display: flex;
+    flex-direction: column;
+}

@@ -172,27 +172,9 @@ class NoBrokenImagesGallery extends TraditionalImageGallery {
 				}
 			}
 
-			$meta = [];
-			if ( $img ) {
-				if ( $this->mShowDimensions ) {
-					$meta[] = htmlspecialchars( $img->getDimensionsString() );
-				}
-				if ( $this->mShowBytes ) {
-					$meta[] = htmlspecialchars( $lang->formatSize( $img->getSize() ) );
-				}
-			} elseif ( $this->mShowDimensions || $this->mShowBytes ) {
-				$meta[] = $this->msg( 'filemissing' )->escaped();
-			}
-			$meta = $lang->semicolonList( $meta );
-			if ( $meta ) {
-				$meta .= Html::rawElement( 'br', [] ) . "\n";
-			}
+		
 
-			$textlink = $this->mShowFilename ?
-				$this->getCaptionHtml( $nt, $lang, $linkRenderer ) :
-				'';
-
-			$galleryText = $this->wrapGalleryText( $textlink . $text . $meta, $thumb );
+			$galleryText = $this->wrapGalleryText( $text, $thumb );
 
 			$gbWidth = $this->getGBWidthOverwrite( $thumb ) ?: $this->getGBWidth( $thumb ) . 'px';
 			# Weird double wrapping (the extra div inside the li) needed due to FF2 bug
