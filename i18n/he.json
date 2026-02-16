@@ -35,5 +35,7 @@
 	"aspaklaryaimages-option-open": "פתוח",
 	"aspaklaryaimages-option-blocked": "חסום",
 	"unknownfiles": "קבצים עם סטטוס נטפרי לא ידוע",
-	"aspaklaryaimages-submit-button": "עדכן סטטוס"
+	"aspaklaryaimages-submit-button": "עדכן סטטוס",
+	"aspaklaryaimages-log-name":"יומן סטטוס תמונות",
+	"aspaklaryaimages-log-header":"יומן פעולות ניהול סטטוס תמונות"
 }
