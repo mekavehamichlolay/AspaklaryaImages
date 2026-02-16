@@ -57,9 +57,11 @@
           if (data?.["aspaklaryaimages-manage-status"]?.updated) {
             for (const title in data["aspaklaryaimages-manage-status"]
               .updated) {
-              document
-                .querySelector(`#aspaklaryaimages-netfree-options-${title}`)
-                ?.closest("li.gallerybox")?.style.display = "none";
+              const li = document.getElementById(`aspaklaryaimages-netfree-options-${title}`)
+                ?.closest("li.gallerybox");
+                if(li) {
+                    li.style.display = "none";
+                }
             }
           }
         })
@@ -72,5 +74,5 @@
     }
   }
 
-  document.getElementById(formId)?.addEventListener("submit", handleSubmit);
+  document.getElementById(formId).addEventListener("submit", handleSubmit);
 })();
