@@ -242,7 +242,7 @@ class File {
 		$logEntry->setPerformer( $performer );
 		$logEntry->setRelations( $relations );
 		if ( $parameter !== '' ) {
-			$logEntry->setParameters( [ '4::description' => $parameter ] );
+			$logEntry->setParameters( [ '4::description' => wfMessage( $parameter ) ] );
 		}
 		return $logEntry->insert();
 	}
