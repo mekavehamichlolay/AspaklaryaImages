@@ -116,6 +116,14 @@
 	"ResourceModules": {
 		"ext.aspaklaryaimages.styles": {
 			"styles": "ext.aspaklaryaimages.css"
+		},
+		"ext.aspaklaryaimages.netfreeUnknown": {
+			"scripts": "ext.aspaklaryaimages.netfreeUnknown.js",
+			"dependencies": [
+				"mediawiki.util",
+				"mediawiki.jqueryMsg",
+				"mediawiki.user"
+			]
 		}
 	},
 	"TrackingCategories": [

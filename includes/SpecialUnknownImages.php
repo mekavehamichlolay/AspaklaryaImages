@@ -85,11 +85,12 @@ class SpecialUnknownImages extends QueryPage {
                 ],
                 Html::rawElement(
                     'button',
-                    [ 'type' => 'button' ],
+                    [ 'type' => 'submit' ],
                     $this->msg( 'aspaklaryaimages-submit-button' )->text()
                 )
             ) );
 			$out->addHTML( $gallery->toHTML() );
+            $out->addModules( 'ext.aspaklaryaimages.netfreeUnknown' );
 		}
 	}
 
@@ -133,7 +134,7 @@ class SpecialUnknownImages extends QueryPage {
                     'input',
                     [
                         'type' => 'radio',
-                        'name' => "netfree_{$row->title}",
+                        'name' => $row->title,
                         'value' => $option,
                         'id' => "{$option}-{$row->title}",
                         'form' => "aspaklaryaimages-netfree-form",
