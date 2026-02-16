@@ -126,7 +126,7 @@ class SpecialUnknownImages extends QueryPage {
     protected function getCellHtml( $row ) {
         $radioButtons = [];
         foreach ( Constants::NETFREE_OPTIONS as $option ) {
-            $radioButtons[] =  Html::rawElement(
+            $radioButtons[] = Html::rawElement('span', ['class' => 'netfree-option'], Html::rawElement(
                     'input',
                     [
                         'type' => 'radio',
@@ -134,9 +134,14 @@ class SpecialUnknownImages extends QueryPage {
                         'value' => $option,
                         'id' => "{$option}-{$row->title}",
                         'form' => "aspaklaryaimages-netfree-form",
-                        'checked' => $option === 'unknown' ? 'checked' : null,
+                        'checked' => $option === 'none' ? 'checked' : null,
                     ]
-            );
+            )
+            . Html::rawElement(
+                'label',
+                [ 'for' => "{$option}-{$row->title}" ],
+                $this->msg( "aspaklaryaimages-option-$option" )->text()
+            ) );
         }
         return Html::rawElement( 'div', [], implode( '', $radioButtons ) );
     }
