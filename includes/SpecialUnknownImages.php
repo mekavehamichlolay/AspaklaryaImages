@@ -147,7 +147,7 @@ class SpecialUnknownImages extends QueryPage {
                 $this->msg( "aspaklaryaimages-option-$option" )->text()
             ) );
         }
-        return Html::rawElement( 'div', [], implode( '', $radioButtons ) );
+        return Html::rawElement( 'div', ['id' => "aspaklaryaimages-netfree-options-{$row->title}"], implode( '', $radioButtons ) );
     }
 }
 

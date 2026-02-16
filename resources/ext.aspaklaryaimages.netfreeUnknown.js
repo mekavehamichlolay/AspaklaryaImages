@@ -29,26 +29,10 @@
       });
     const api = new mw.Api();
     if (openNames.length > 0) {
-      const openResponse = await sendApi(openNames, "open", api);
-      if (openResponse) {
-        console.log(openResponse);
-        openImages.forEach((li) => {
-          li.style.display = "none";
-        });
-      } else {
-        mw.notify("אירעה שגיאה בעת עדכון הסטטוס ל'פתוח'", { type: "error" });
-      }
+      sendApi(openNames, "open", api);
     }
     if (blockedNames.length > 0) {
-      const blockedResponse = await sendApi(blockedNames, "blocked", api);
-      if (blockedResponse) {
-        console.log(blockedResponse);
-        blockedImages.forEach((li) => {
-          li.style.display = "none";
-        });
-      } else {
-        mw.notify("אירעה שגיאה בעת עדכון הסטטוס ל'חסום'", { type: "error" });
-      }
+      sendApi(blockedNames, "blocked", api);
     }
   }
   /**
@@ -56,30 +40,35 @@
    * @param {string[]} imageNames
    * @param {"open"|"blocked"} status
    * @param {mw.Api} api
-   * @return {Promise<string[]>}
    */
-  async function sendApi(imageNames, status, api) {
-    const done = [];
+  function sendApi(imageNames, status, api) {
     for (; imageNames.length; ) {
       const images = imageNames.splice(
         imageNames.length > 50 ? imageNames.length - 50 : 0,
         50,
       );
-      try {
-        const res = await api.postWithToken("csrf", {
+      api
+        .postWithToken("csrf", {
           action: "aspaklaryaimages-manage-status",
           titles: images.join("|"),
           netfree: status,
+        })
+        .done((data) => {
+          if (data?.["aspaklaryaimages-manage-status"]?.updated) {
+            for (const title in data["aspaklaryaimages-manage-status"]
+              .updated) {
+              document
+                .querySelector(`#aspaklaryaimages-netfree-options-${title}`)
+                ?.closest("li.gallerybox")?.style.display = "none";
+            }
+          }
+        })
+        .fail(() => {
+          mw.notify(
+            `אירעה שגיאה בעת עדכון הסטטוס ל'${status === "open" ? "פתוח" : "חסום"}'`,
+            { type: "error" },
+          );
         });
-        const json = await res.json();
-        if (json?.["aspaklaryaimages-status"]?.updated) {
-          done.push(json?.["aspaklaryaimages-status"]?.updated);
-        }
-      } catch (error) {
-        console.error("Error sending API request:", error);
-        return null;
-      }
-      return done;
     }
   }
 
