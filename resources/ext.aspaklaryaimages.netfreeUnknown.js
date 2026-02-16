@@ -55,8 +55,8 @@
         })
         .done((data) => {
           console.log(data);
-          if (data?.["aspaklaryaimages-manage-status"]?.updated) {
-            for (const title in data["aspaklaryaimages-manage-status"]
+          if (data?.["aspaklaryaimages-status"]?.updated) {
+            for (const title in data["aspaklaryaimages-status"]
               .updated) {
               const li = document
                 .getElementById(`aspaklaryaimages-netfree-options-${title}`)
