@@ -54,14 +54,11 @@
           netfree: status,
         })
         .done((data) => {
-          console.log(data);
           if (data?.["aspaklaryaimages-status"]?.updated) {
-            for (const title in data["aspaklaryaimages-status"]
-              .updated) {
+            for (const title in data["aspaklaryaimages-status"].updated) {
               const li = document
                 .getElementById(`aspaklaryaimages-netfree-options-${title}`)
                 ?.closest("li.gallerybox");
-              console.log(li);
               if (li) {
                 li.style.display = "none";
               }
@@ -78,4 +75,47 @@
   }
 
   document.getElementById(formId).addEventListener("submit", handleSubmit);
+
+  const netfreeAutoButton = document.createElement("button");
+  netfreeAutoButton.type = "button";
+  netfreeAutoButton.textContent = "זיהוי אוטומטי";
+  netfreeAutoButton.classList.add("netfree-auto-button");
+  netfreeAutoButton.addEventListener("click", async () => {
+    const blockedSelector = 'input[type="radio"][value="blocked"]';
+    const openSelector = 'input[type="radio"][value="open"]';
+
+    document.querySelectorAll("li.gallerybox").forEach(async (li) => {
+      const img = li.querySelector("img");
+      if (!img) return;
+
+      try {
+        const src = `${img.src}&~nfopt(getInfoOnly=1)`;
+        const response = await fetch(src);
+        if (!response.ok) {
+          throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const text = await response.text();
+        const r = JSON.parse(text);
+        let selector = null;
+        if (r.value === 50) {
+          selector = blockedSelector;
+          console.log("✅ זוהה חסום");
+        } else if (r.value === 100) {
+          selector = openSelector;
+          console.log("✅ זוהה פתוח");
+        } else {
+          console.log("⚠️ התמונה בבדיקה");
+        }
+
+        if (selector) {
+          const ra = li.querySelector(selector);
+          if (ra) ra.checked = true;
+        }
+      } catch (error) {
+        console.log("❌ דילוג על תמונה עקב שגיאת רשת/נטפרי:", error.message);
+        return; // דילוג על התמונה הנוכחית והמשך לתמונה הבאה
+      }
+    });
+  });
+  document.getElementById(formId).appendChild(netfreeAutoButton);
 })();
