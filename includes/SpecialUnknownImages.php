@@ -82,7 +82,7 @@ class SpecialUnknownImages extends QueryPage {
 
 	public function getQueryInfo() {
 		return [
-			'tables' => [ 'imagelinks' ],
+			'tables' => [ 'imagelinks', Constants::IMAGES_TABLE ],
 			'fields' => [
 				'title' => 'il_to',
 			],
