@@ -36,7 +36,15 @@
 	"aspaklaryaimages-option-blocked": "חסום",
 	"unknownfiles": "קבצים עם סטטוס נטפרי לא ידוע",
 	"aspaklaryaimages-submit-button": "עדכן סטטוס",
-	"aspaklaryaimages-log-name":"יומן סטטוס תמונות",
-	"aspaklaryaimages-log-header":"יומן פעולות ניהול סטטוס תמונות",
-	"logentry-aspaklaryaimages-insert" :"$1 {{GENDER:$2|הגדיר|הגדירה}} את הסטטוס של $3 כ$4"
+	"aspaklaryaimages-log-name": "יומן סטטוס תמונות",
+	"aspaklaryaimages-log-header": "יומן פעולות ניהול סטטוס תמונות",
+	"logentry-aspaklaryaimages-insert": "$1 {{GENDER:$2|הגדיר|הגדירה}} את הסטטוס של $3 כ$4",
+	"logentry-aspaklaryaimages-update": "$1 {{GENDER:$2|עדכן|עדכנה}} את הסטטוס של $3 ל$4",
+	"logentry-aspaklaryaimages-delete": "$1 {{GENDER:$2|מחק|מחקה}} את הסטטוס של $3",
+	"netfree-blocked": "חסום בנטפרי",
+	"netfree-open": "פתוח בנטפרי",
+	"authorized-blocked": "חסום מקומית",
+	"authorized-open": "פתוח מקומית",
+	"netfree-removed": "ללא סטטוס נטפרי",
+	"authorized-removed": "ללא סטטוס מקומי"
 }
