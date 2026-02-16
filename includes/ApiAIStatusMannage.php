@@ -56,6 +56,10 @@ class ApiAIStatusMannage extends ApiBase {
 			$this->dieWithError( $result[0]->getValue() );
 		}
 		foreach ( $result[1] as $title => $action ) {
+			if ( $action === 'delete' ) {
+				File::publishLog( TitleValue::tryNew( NS_FILE, $title ), 'delete', '', $this->getAuthority()->getUser() );
+				continue;
+			}
 			$logAction = $this->getAction( $action, $netfree, $authorized );
 			foreach ( $logAction as $act ) {
 				File::publishLog( TitleValue::tryNew( NS_FILE, $title ), $action, $act, $this->getAuthority()->getUser() );
