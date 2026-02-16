@@ -26,9 +26,7 @@ use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IConnectionProvider;
 
 /**
- * List of file pages which haven't been categorised
- *
- * @todo FIXME: Use an instance of UncategorizedPagesPage or something
+ * List of file pages which don't have yet a netfree or authorize status
  *
  * @ingroup SpecialPage
  * @author Rob Church <robchur@gmail.com>
