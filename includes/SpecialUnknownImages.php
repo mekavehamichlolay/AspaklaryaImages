@@ -43,7 +43,7 @@ class SpecialUnknownImages extends QueryPage {
 	}
 
 	public function isExpensive() {
-		return false;
+		return true;
 	}
 
 	public function isSyndicated() {
