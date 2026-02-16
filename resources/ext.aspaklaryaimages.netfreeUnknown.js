@@ -44,8 +44,8 @@
   function sendApi(imageNames, status, api) {
     for (; imageNames.length; ) {
       const images = imageNames.splice(
-        imageNames.length > 50 ? imageNames.length - 50 : 0,
-        50,
+        imageNames.length > 25 ? imageNames.length - 25 : 0,
+        25,
       );
       api
         .postWithToken("csrf", {
