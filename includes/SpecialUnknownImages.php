@@ -126,6 +126,9 @@ class SpecialUnknownImages extends QueryPage {
     protected function getCellHtml( $row ) {
         $radioButtons = [];
         foreach ( Constants::NETFREE_OPTIONS as $option ) {
+            if ( !$option ) {
+                continue;
+            }
             $radioButtons[] = Html::rawElement('span', ['class' => 'netfree-option'], Html::rawElement(
                     'input',
                     [
