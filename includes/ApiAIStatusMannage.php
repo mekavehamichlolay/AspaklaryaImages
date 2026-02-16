@@ -66,7 +66,7 @@ class ApiAIStatusMannage extends ApiBase {
 			}
 		}
 		$this->getResult()->addValue( null, 'aspaklaryaimages-status', [
-			'updated' => $result,
+			'updated' => $result[1] ?? [],
 		] );
 	}
 
