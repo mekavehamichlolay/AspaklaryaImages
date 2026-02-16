@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Aliases for aspaklaryalockdown
+ * Aliases for aspaklaryaimages
  *
  * @file
  * @ingroup Extensions
@@ -13,12 +13,12 @@ $specialPageAliases = [];
  * @author Mekave
  */
 $specialPageAliases['en'] = [
-	'AIUnknownImages' => [ 'Unknown files', 'Unknownfiles', 'UnknownFiles', 'Unknown_files' ],
+	'Aiunknownimages' => [ 'Unknown files', 'Unknownfiles', 'UnknownFiles', 'Unknown_files' ],
 ];
 
 /** Hebrew (עברית)
  * @author Mekave
  */
 $specialPageAliases['he'] = [
-	'AIUnknownImages' => [ 'קבצים ללא הגדרה' ],
+	'Aiunknownimages' => [ 'קבצים ללא הגדרה' ],
 ];
