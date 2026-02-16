@@ -50,6 +50,9 @@ class SpecialUnknownImages extends QueryPage {
 		return false;
 	}
 
+    public function isCacheable(){
+        return true;
+    }
 	protected function getOrderFields() {
 		return [ 'title' ];
 	}
