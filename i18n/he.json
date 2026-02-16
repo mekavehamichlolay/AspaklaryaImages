@@ -37,5 +37,6 @@
 	"unknownfiles": "קבצים עם סטטוס נטפרי לא ידוע",
 	"aspaklaryaimages-submit-button": "עדכן סטטוס",
 	"aspaklaryaimages-log-name":"יומן סטטוס תמונות",
-	"aspaklaryaimages-log-header":"יומן פעולות ניהול סטטוס תמונות"
+	"aspaklaryaimages-log-header":"יומן פעולות ניהול סטטוס תמונות",
+	"logentry-aspaklaryaimages-insert" :"$1 {{GENDER:$2|הגדיר|הגדירה}} את הסטטוס של $3 כ$4"
 }
