@@ -43,16 +43,13 @@ class SpecialUnknownImages extends QueryPage {
 	}
 
 	public function isExpensive() {
-		return true;
+		return false;
 	}
 
 	public function isSyndicated() {
 		return false;
 	}
 
-    public function isCacheable(){
-        return true;
-    }
 	protected function getOrderFields() {
 		return [ 'title' ];
 	}
