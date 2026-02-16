@@ -11,7 +11,6 @@ use MediaWiki\Title\Title;
 use RuntimeException;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
-use Wikimedia\Rdbms\IReadableDatabase;
 
 class FilesMannager {
 
@@ -74,7 +73,7 @@ class FilesMannager {
 	 * @param string[] $titles
 	 * @param string|null $netfree open|blocked or empty string to leave unchanged, null to delete
 	 * @param string|null $authorized open|blocked or empty string to leave unchanged, null to delete
-	 * @return array<string,Status>
+	 * @return array {0: Status, 1:[string]string]} Array of status and result where result is an array with title as key and action (insert/update/delete) as value
 	 * @throws InvalidArgumentException
 	 * @throws PermissionsError
 	 * @throws RuntimeException
@@ -98,9 +97,9 @@ class FilesMannager {
 		try {
 			$titles = $self->setTitles( $titles );
 		} catch ( InvalidArgumentException $e ) {
-			return [ Status::newFatal( $e->getMessage() ) ];
+			return [ Status::newFatal( $e->getMessage() ), [] ];
 		} catch ( RuntimeException $e ) {
-			return [ Status::newFatal( $e->getMessage() ) ];
+			return [ Status::newFatal( $e->getMessage() ), [] ];
 		}
 
 		/** @var array<string,bool> */
@@ -149,7 +148,7 @@ class FilesMannager {
 			if ( $delete ) {
 				if ( count( $current ) === 0 ) {
 					$success = true;
-					return [ Status::newGood( 'No entries found for the specified titles' ) ];
+					return [ Status::newGood( 'No entries found for the specified titles' ), [] ];
 				}
 				$con->newDeleteQueryBuilder()
 					->delete( Constants::IMAGES_TABLE )
@@ -157,14 +156,16 @@ class FilesMannager {
 					->caller( __METHOD__ )
 					->execute();
 				if ( $con->affectedRows() < count( $current ) ) {
-					return [ Status::newFatal( 'Failed to delete all specified entries' ) ];
+					return [ Status::newFatal( 'Failed to delete all specified entries' ), [] ];
 				}
 				$success = true;
-				return array_fill_keys( array_values( $current ), Status::newGood() );
+				return [ Status::newGood( 'Entries deleted successfully' ), array_fill_keys( array_values( $current ), 'delete' ) ];
 			}
 			$newData = [];
+			$result = [];
 			if ( count( $names ) > 0 ) {
 				$newData[ ( $netfreeBit ?? 0 ) | ( $authorizedBit ?? 0 ) ] = array_keys( $names );
+				$result = array_merge( $result, array_fill_keys( array_values( $names ), 'insert' ) );
 			}
 			$existingBits = array_keys( $current );
 			$changedBits = [];
@@ -180,14 +181,16 @@ class FilesMannager {
 				if ( $newBit !== $bit ) {
 					if ( $newBit === 0 ) {
 						$toDelete = array_merge( $toDelete, array_keys( $current[ $bit ] ) );
+						$result = array_merge( $result, array_fill_keys( array_values( $current[ $bit ] ), 'delete' ) );
 						continue;
 					}
 					$changedBits[ $bit ] = $newBit;
 					$newData[ $newBit ] ??= [];
 					$newData[ $newBit ] = array_merge( $newData[ $newBit ], array_values( $current[ $bit ] ) );
+					$result = array_merge( $result, array_fill_keys( array_values( $current[ $bit ] ), 'update' ) );
 				}
 			}
-
+			
 			foreach ( $changedBits as $bit => $_ ) {
 				$toDelete = array_merge( $toDelete, array_keys( $current[ $bit ] ) );
 			}
@@ -198,12 +201,12 @@ class FilesMannager {
 					->caller( __METHOD__ )
 					->execute();
 				if ( $con->affectedRows() < count( $toDelete ) ) {
-					return [ Status::newFatal( 'Failed to delete all specified entries' ) ];
+					return [ Status::newFatal( 'Failed to delete all specified entries' ), [] ];
 				}
 			}
 			if ( count( $newData ) === 0 ) {
 				$success = true;
-				return array_fill_keys( array_values( array_merge( ...array_values( $current ) ) ), Status::newGood() );
+				return [ Status::newGood( 'No new entries to insert' ), $result ];
 			}
 			$toSet = [];
 			foreach ( $newData as $bit => $titles ) {
@@ -223,10 +226,10 @@ class FilesMannager {
 				->caller( __METHOD__ )
 				->execute();
 			if ( $con->affectedRows() < count( $toSet ) ) {
-				return [ Status::newFatal( 'Failed to insert all specified entries' ) ];
+				return [ Status::newFatal( 'Failed to insert all specified entries' ), [] ];
 			}
 			$success = true;
-			return array_fill_keys( array_values( array_merge( ...array_values( $newData ) ) ), Status::newGood() );
+			return [ Status::newGood( 'Entries inserted successfully' ), $result ];
 
 		} finally {
 			if ( $success ) {

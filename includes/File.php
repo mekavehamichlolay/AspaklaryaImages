@@ -3,11 +3,14 @@
 namespace MediaWiki\Extension\AspaklaryaImages;
 
 use MediaWiki\FileRepo\File\File as FileRepoFile;
+use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Logging\ManualLogEntry;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Page\PageReference;
 use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use MediaWiki\User\User;
+use MediaWiki\User\UserIdentity;
 use RuntimeException;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -182,10 +185,10 @@ class File {
 				Constants::IMAGES_TABLE,
 				[ Constants::IMAGE_TABLE_TITLE_FIELD => $this->title->getDBKey(), Constants::IMAGE_TABLE_STATUS_FIELD => $newStatusBits ],
 				__METHOD__
- );
+ 			);
 			$newId = $db->insertId();
 			$logType = 'insert';
-			$logs[] = $this->publishLog( $logType, '', $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
+			$logs[] = self::publishLog( $this->title, $logType, '', $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
 			if ( Constants::isNetfreeKnown( $newStatusBits ) ) {
 				$logParameters['netfree'] = Constants::isNetfreeOpen( $newStatusBits ) ? 'open' : 'blocked';
 			}
@@ -203,7 +206,7 @@ class File {
 					Constants::IMAGES_TABLE,
 					[ Constants::IMAGE_TABLE_TITLE_FIELD => $this->title->getDBKey(), Constants::IMAGE_TABLE_STATUS_FIELD => $newStatusBits ],
 					__METHOD__
- );
+ 				);
 				$newId = $db->insertId();
 				$logType = 'update';
 				if ( $netfreeChange ) {
@@ -222,20 +225,20 @@ class File {
 				}
 			} else {
 				$logType = 'delete';
-				$logs[] = $this->publishLog( $logType, '', $performer );
+				$logs[] = self::publishLog( $this->title, $logType, '', $performer );
 			}
 		}
 
 		foreach ( $logParameters as $key => $value ) {
-			$logs[] = $this->publishLog( 'update', "$key-$value", $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
+			$logs[] = self::publishLog( $this->title, 'update', "$key-$value", $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
 		}
 		$this->invalidateCache();
 		return Status::newGood( $logs );
 	}
 
-	private function publishLog( string $logType, string $parameter, User $performer, array $relations = [] ): int {
+	public static function publishLog( LinkTarget|PageReference $title, string $logType, string $parameter, UserIdentity $performer, array $relations = [] ): int {
 		$logEntry = new ManualLogEntry( 'aspaklaryaimages', $logType );
-		$logEntry->setTarget( $this->title );
+		$logEntry->setTarget( $title );
 		$logEntry->setPerformer( $performer );
 		$logEntry->setRelations( $relations );
 		if ( $parameter !== '' ) {

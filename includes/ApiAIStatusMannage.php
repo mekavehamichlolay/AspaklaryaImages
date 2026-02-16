@@ -4,6 +4,8 @@ namespace MediaWiki\Extension\AspaklaryaImages;
 
 use MediaWiki\Api\ApiBase;
 use MediaWiki\MediaWikiServices;
+use MediaWiki\Status\Status;
+use MediaWiki\Title\TitleValue;
 use Wikimedia\ParamValidator\ParamValidator;
 
 class ApiAIStatusMannage extends ApiBase {
@@ -50,12 +52,41 @@ class ApiAIStatusMannage extends ApiBase {
 		$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
 		$result = FilesMannager::updateMultiStatus( $lb, $cache, $this->getAuthority(), $this->titles, $netfree, $authorized );
-		// if ( $result[0] && !$result[0]->isOK() ) {
-		// 	$this->dieWithError( $result[0]->getValue() );
-		// }
+		if ( isset($result[0]) && $result[0] instanceof Status && !$result[0]->isOK() ) {
+			$this->dieWithError( $result[0]->getValue() );
+		}
+		foreach ( $result[1] as $title => $action ) {
+			$logAction = $this->getAction( $action, $netfree, $authorized );
+			foreach ( $logAction as $act ) {
+				File::publishLog( TitleValue::tryNew( NS_FILE, $title ), $action, $act, $this->getAuthority()->getUser() );
+			}
+		}
 		$this->getResult()->addValue( null, 'aspaklaryaimages-status', [
 			'updated' => $result,
 		] );
+	}
+
+	private function getAction( string $action, string $netfree, string $authorized ): array {
+		$logAction = [];
+		if ( $netfree === 'open' ) {
+			$logAction[] = 'netfree-open';
+		} elseif ( $netfree === 'blocked' ) {
+			$logAction[] = 'netfree-blocked';
+		}
+		if ( $authorized === 'open' ) {
+			$logAction[] = 'authorized-open';
+		} elseif ( $authorized === 'blocked' ) {
+			$logAction[] = 'authorized-blocked';
+		}
+		if ( $action === 'update') {
+			if ( $netfree === 'none' ) {
+				$logAction[] = 'netfree-removed';
+			}
+			if ( $authorized === 'none' ) {
+				$logAction[] = 'authorized-removed';
+			}
+		}
+		return $logAction;
 	}
 
 		/** @inheritDoc */
