@@ -66,7 +66,7 @@ class ApiAIStatusMannage extends ApiBase {
 		] );
 	}
 
-	private function getAction( string $action, string $netfree, string $authorized ): array {
+	private function getAction( string $action, string|null $netfree, string|null $authorized ): array {
 		$logAction = [];
 		if ( $netfree === 'open' ) {
 			$logAction[] = 'netfree-open';
