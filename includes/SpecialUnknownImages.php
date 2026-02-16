@@ -88,6 +88,7 @@ class SpecialUnknownImages extends QueryPage {
 			'tables' => [ 'imagelinks', Constants::IMAGES_TABLE ],
 			'fields' => [
 				'title' => 'il_to',
+                'namespace' => (string)NS_FILE,
 			],
 			'conds' => [
 				Constants::IMAGE_TABLE_TITLE_FIELD => null,
