@@ -54,14 +54,17 @@
           netfree: status,
         })
         .done((data) => {
+          console.log(data);
           if (data?.["aspaklaryaimages-manage-status"]?.updated) {
             for (const title in data["aspaklaryaimages-manage-status"]
               .updated) {
-              const li = document.getElementById(`aspaklaryaimages-netfree-options-${title}`)
+              const li = document
+                .getElementById(`aspaklaryaimages-netfree-options-${title}`)
                 ?.closest("li.gallerybox");
-                if(li) {
-                    li.style.display = "none";
-                }
+              console.log(li);
+              if (li) {
+                li.style.display = "none";
+              }
             }
           }
         })
