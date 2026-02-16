@@ -72,9 +72,15 @@
 			]
 		}
 	},
-	"LogTypes": [],
-	"LogNames": {},
-	"LogHeaders": {},
+	"LogTypes": [
+		"aspaklaryaimages"
+	],
+	"LogNames": {
+		"aspaklaryaimages": "aspaklaryaimages-log-name"
+	},
+	"LogHeaders": {
+		"aspaklaryaimages": "aspaklaryaimages-log-header"
+	},
 	"LogActionsHandlers": {},
 	"LogRestrictions": {},
 	"Actions": {},
