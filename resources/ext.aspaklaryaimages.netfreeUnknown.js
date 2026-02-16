@@ -84,9 +84,10 @@
     const blockedSelector = 'input[type="radio"][value="blocked"]';
     const openSelector = 'input[type="radio"][value="open"]';
 
-    document.querySelectorAll("li.gallerybox").forEach(async (li) => {
+    const listItems = document.querySelectorAll("li.gallerybox");
+    for (const li of listItems) {
       const img = li.querySelector("img");
-      if (!img) return;
+      if (!img) continue;
 
       try {
         const src = `${img.src}&~nfopt(getInfoOnly=1)`;
@@ -113,9 +114,8 @@
         }
       } catch (error) {
         console.log("❌ דילוג על תמונה עקב שגיאת רשת/נטפרי:", error.message);
-        return; // דילוג על התמונה הנוכחית והמשך לתמונה הבאה
       }
-    });
+    }
   });
   document.getElementById(formId).appendChild(netfreeAutoButton);
 })();
