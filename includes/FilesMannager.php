@@ -165,7 +165,7 @@ class FilesMannager {
 			$result = [];
 			if ( count( $names ) > 0 ) {
 				$newData[ ( $netfreeBit ?? 0 ) | ( $authorizedBit ?? 0 ) ] = array_keys( $names );
-				$result = array_merge( $result, array_fill_keys( array_values( $names ), 'insert' ) );
+				$result = array_merge( $result, array_fill_keys( array_keys( $names ), 'insert' ) );
 			}
 			$existingBits = array_keys( $current );
 			$changedBits = [];
