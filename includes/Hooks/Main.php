@@ -3,6 +3,7 @@
 namespace MediaWiki\Extension\AspaklaryaImages\Hooks;
 
 use MediaWiki\Extension\AspaklaryaImages\File;
+use MediaWiki\Extension\AspaklaryaImages\NoBrokenImagesGallery;
 use MediaWiki\Extension\AspaklaryaImages\NolinesImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\PackedHoverImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\PackedImageGallery;
@@ -154,6 +155,7 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 			'packed-hover' => PackedHoverImageGallery::class,
 			'packed-overlay' => PackedOverlayImageGallery::class,
 			'slideshow' => SlideshowImageGallery::class,
+			'nobrokenimages' => NoBrokenImagesGallery::class,
 		];
 	}
 

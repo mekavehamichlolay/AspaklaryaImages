@@ -62,7 +62,7 @@ class SpecialUnknownImages extends QueryPage {
 
     protected function outputResults( $out, $skin, $dbr, $res, $num, $offset ) {
 		if ( $num > 0 ) {
-			$gallery = ImageGalleryBase::factory( false, $this->getContext() );
+			$gallery = ImageGalleryBase::factory( 'nobrokenimages', $this->getContext() );
 
 			// $res might contain the whole 1,000 rows, so we read up to
 			// $num [should update this to use a Pager]
