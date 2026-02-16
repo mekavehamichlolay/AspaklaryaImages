@@ -81,7 +81,9 @@
 	"LogHeaders": {
 		"aspaklaryaimages": "aspaklaryaimages-log-header"
 	},
-	"LogActionsHandlers": {},
+	"LogActionsHandlers": {
+		"aspaklaryaimages/*": "LogFormatter"
+	},
 	"LogRestrictions": {},
 	"Actions": {},
 	"APIModules": {
