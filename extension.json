@@ -81,7 +81,14 @@
 		"aspaklaryaimages-manage-status": "MediaWiki\\Extension\\AspaklaryaImages\\ApiAIStatusMannage"
 	},
 	"ExtensionMessagesFiles": {},
-	"SpecialPages": {},
+	"SpecialPages": {
+		"AIUnknownImages": {
+			"class": "MediaWiki\\Extension\\AspaklaryaImages\\SpecialUnknownImages",
+			"services": [
+				"ConnectionProvider"
+			]
+		}
+	},
 	"GrantPermissionGroups": {
 		"aspaklaryaimages": "administration"
 	},
