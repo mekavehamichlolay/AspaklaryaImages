@@ -57,7 +57,8 @@
 		"LoadExtensionSchemaUpdates": "schema",
 		"ImageBeforeProduceHTML": "main",
 		"AfterParserFetchFileAndTitle": "main",
-		"GalleryGetModes": "main"
+		"GalleryGetModes": "main",
+		"wgQueryPages": "main"
 	},
 	"HookHandlers": {
 		"schema": {

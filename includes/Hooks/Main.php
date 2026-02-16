@@ -8,6 +8,7 @@ use MediaWiki\Extension\AspaklaryaImages\PackedHoverImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\PackedImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\PackedOverlayImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\SlideshowImageGallery;
+use MediaWiki\Extension\AspaklaryaImages\SpecialUnknownImages;
 use MediaWiki\Extension\AspaklaryaImages\TraditionalImageGallery;
 use MediaWiki\Hook\AfterParserFetchFileAndTitleHook;
 use MediaWiki\Hook\GalleryGetModesHook;
@@ -16,11 +17,12 @@ use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
+use MediaWiki\SpecialPage\Hook\WgQueryPagesHook;
 use MediaWiki\Title\Title;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
 
-class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPreferencesHook, AfterParserFetchFileAndTitleHook, GalleryGetModesHook {
+class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPreferencesHook, AfterParserFetchFileAndTitleHook, GalleryGetModesHook, WgQueryPagesHook {
 	private array $availableOptions = [ 'unknown', 'blocked' ];
 
 	public function __construct( private ILoadBalancer $loadBalancer, private WANObjectCache $cache ) {
@@ -153,5 +155,12 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 			'packed-overlay' => PackedOverlayImageGallery::class,
 			'slideshow' => SlideshowImageGallery::class,
 		];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function onWgQueryPages( &$qp ) {
+		$qp[] = [ SpecialUnknownImages::class, 'Unknownfiles' ];
 	}
 }
