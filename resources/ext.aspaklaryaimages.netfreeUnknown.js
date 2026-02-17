@@ -84,7 +84,10 @@
     for (const li of listItems) {
       const img = li.querySelector("img");
       if (!img) continue;
-      if (li.querySelector(blockedSelector+":checked") || li.querySelector(openSelector+":checked")) {
+      if (
+        li.querySelector(blockedSelector + ":checked") ||
+        li.querySelector(openSelector + ":checked")
+      ) {
         console.log("⚠️ זוהה כבר סטטוס לתמונה, דילוג");
         continue;
       }
@@ -118,5 +121,38 @@
     }
   });
   document.getElementById(formId).appendChild(netfreeAutoButton);
-
+  const openButton = document.createElement("button");
+  openButton.textContent = "סמן הכל כפתוח";
+  openButton.type = "button";
+  openButton.addEventListener("click", () => {
+    document
+      .querySelectorAll(`input[form=${formId}][type=radio][value=open]`)
+      .forEach((input) => {
+        input.checked = true;
+      });
+  });
+  document.getElementById(formId).appendChild(openButton);
+  const oposeButton = document.createElement("button");
+  oposeButton.textContent = "היפוך בחירה";
+  oposeButton.type = "button";
+  oposeButton.addEventListener("click", () => {
+    document
+      .querySelectorAll(`input[form=${formId}][type=radio]:checked`)
+      .forEach((input) => {
+        if (input.value === "open") {
+          input.checked = false;
+          const blockedInput = document.querySelector(
+            `input[type=radio][name=${JSON.stringify(input.name)}][value=blocked]`,
+          );
+          if (blockedInput) blockedInput.checked = true;
+        } else if (input.value === "blocked") {
+          input.checked = false;
+          const openInput = document.querySelector(
+            `input[type=radio][name=${JSON.stringify(input.name)}][value=open]`,
+          );
+          if (openInput) openInput.checked = true;
+        }
+      });
+  });
+  document.getElementById(formId).appendChild(oposeButton);
 })();
