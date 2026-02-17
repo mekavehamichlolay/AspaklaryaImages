@@ -136,7 +136,6 @@ class SpecialUnknownImages extends QueryPage {
                         'type' => 'radio',
                         'name' => $row->title,
                         'value' => $option,
-                        'id' => "{$option}-{$row->title}",
                         'form' => "aspaklaryaimages-netfree-form",
                         'checked' => $option === 'none' ? 'checked' : null,
                     ]

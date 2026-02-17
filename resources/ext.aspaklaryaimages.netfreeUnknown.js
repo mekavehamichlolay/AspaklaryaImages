@@ -8,23 +8,19 @@
     e.preventDefault();
     e.stopPropagation();
     const openNames = [];
-    const openImages = [];
     document
       .querySelectorAll(
         `input[form="${formId}"][type="radio"][value="open"]:checked`,
       )
       .forEach((input) => {
-        openImages.push(input.closest("li"));
         openNames.push(input.name);
       });
     const blockedNames = [];
-    const blockedImages = [];
     document
       .querySelectorAll(
         `input[form="${formId}"][type="radio"][value="blocked"]:checked`,
       )
       .forEach((input) => {
-        blockedImages.push(input.closest("li"));
         blockedNames.push(input.name);
       });
     const api = new mw.Api();
@@ -60,7 +56,7 @@
                 .getElementById(`aspaklaryaimages-netfree-options-${title}`)
                 ?.closest("li.gallerybox");
               if (li) {
-                li.style.display = "none";
+                li.parentNode.removeChild(li);
               }
             }
           }
@@ -88,6 +84,10 @@
     for (const li of listItems) {
       const img = li.querySelector("img");
       if (!img) continue;
+      if (li.querySelector(blockedSelector+":checked") || li.querySelector(openSelector+":checked")) {
+        console.log("⚠️ זוהה כבר סטטוס לתמונה, דילוג");
+        continue;
+      }
 
       try {
         const src = `${img.src}&~nfopt(getInfoOnly=1)`;
@@ -118,4 +118,5 @@
     }
   });
   document.getElementById(formId).appendChild(netfreeAutoButton);
+
 })();
