@@ -58,7 +58,8 @@
 		"ImageBeforeProduceHTML": "main",
 		"AfterParserFetchFileAndTitle": "main",
 		"GalleryGetModes": "main",
-		"wgQueryPages": "main"
+		"wgQueryPages": "main",
+		"SkinTemplateNavigation::Universal": "main"
 	},
 	"HookHandlers": {
 		"schema": {
