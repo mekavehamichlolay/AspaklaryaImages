@@ -57,7 +57,7 @@
 	"ai-manage-status-netfree-open": "פתוח בנטפרי",
 	"ai-manage-status-netfree-blocked": "חסום בנטפרי",
 	"ai-manage-status-netfree-none": "ללא סטטוס נטפרי",
-	"ai-manage-status-summary": "ניהול סטטוס תמונה: [[:$1]]",
+	"ai-manage-status-summary": "ניהול סטטוס של התמונה: [[:$1]]",
 	"ai-manage-status-no-title-title": "כותרת לא תקינה",
 	"ai-manage-status-no-title-text": "לא הוזנה כותרת תקינה. אנא ספק כותרת של דף תמונה.",
 	"ai-manage-status-invalid-title-title": "כותרת לא תקינה",
@@ -69,5 +69,6 @@
 	"ai-status-change-success": "סטטוס התמונה עודכן בהצלחה.",
 	"ai-status-change-failure": "לא ניתן לעדכן את סטטוס התמונה. אנא נסה שוב מאוחר יותר.",
 	"ai-manage-status-link-text": "ניהול סטטוס תמונה",
-	"manage-status": "ניהול סטטוס תמונה"
+	"manage-status": "ניהול סטטוס תמונה",
+	"ai-status-legend":"הגדר סטטוס או השאר ללא שינוי"
 }
