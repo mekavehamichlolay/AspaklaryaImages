@@ -241,7 +241,7 @@ class File {
 		}
 
 		foreach ( $logParameters as $key => $value ) {
-			$logs[] = self::publishLog( $this->title, $logType || 'update', "$key-$value", $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
+			$logs[] = self::publishLog( $this->title, $logType, "$key-$value", $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
 		}
 		$this->invalidateCache();
 		return Status::newGood( $logs );
