@@ -46,5 +46,7 @@
 	"authorized-blocked": "חסום מקומית",
 	"authorized-open": "פתוח מקומית",
 	"netfree-removed": "ללא סטטוס נטפרי",
-	"authorized-removed": "ללא סטטוס מקומי"
+	"authorized-removed": "ללא סטטוס מקומי",
+	"ai-manage-status-authorized-text": "סטטוס מקומי",
+	"ai-manage-status-netfree-text": "סטטוס נטפרי"
 }
