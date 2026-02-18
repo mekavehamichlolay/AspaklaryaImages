@@ -130,7 +130,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
         if ( $this->wasSaved ) {
             // $authorizedRadio['default'] = array_flip( Constants::AUTHORIZED_OPTIONS )[ Constants::getTextOptionFromBool( $this->file->getAuthorizedStatus() ) ];
         }
-        // $fields[] = $authorizedRadio;
+        $fields[] = $authorizedRadio;
         $htmlForm = HTMLForm::factory( 'ooui', $fields, $this->getContext() );
         $htmlForm
             ->setSubmitText( $this->msg( 'ai-status-submit' )->text() )
