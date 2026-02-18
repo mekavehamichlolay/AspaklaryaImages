@@ -109,12 +109,12 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 		];
         
         foreach ( Constants::NETFREE_OPTIONS as $option ) {
-            $netfreeRadio[ 'options-messages' ][] =[ 'ai-manage-status-netfree-' . $option || 'leave' => $option ];
+            $netfreeRadio[ 'options-messages' ][] = [ 'ai-manage-status-netfree-' . $option || 'leave' => $option ];
         }
         if ( $this->wasSaved ) {
             $netfreeRadio['default'] = Constants::getTextOptionFromBool( $this->file->getNetfreeStatus() );
         }
-        $fields[] = $netfreeRadio;
+        // $fields[] = $netfreeRadio;
         $authorizedRadio = [
         	'type' => 'radio',
 			'label-raw' => $this->msg( 'ai-manage-status-authorized-text' )->escaped(),
@@ -124,13 +124,13 @@ class SpecialManageStatus extends UnlistedSpecialPage {
             'default' => '',
 		];
         foreach ( Constants::AUTHORIZED_OPTIONS as $option ) {
-            $authorizedRadio[ 'options-messages' ][] =[ 'ai-manage-status-authorized-' . $option || 'leave' => $option ];
+            $authorizedRadio[ 'options-messages' ][] = [ 'ai-manage-status-authorized-' . $option || 'leave' => $option ];
         }
         
         if ( $this->wasSaved ) {
             $authorizedRadio['default'] = Constants::getTextOptionFromBool( $this->file->getAuthorizedStatus() );
         }
-        $fields[] = $authorizedRadio;
+        // $fields[] = $authorizedRadio;
         $htmlForm = HTMLForm::factory( 'ooui', $fields, $this->getContext() );
         $htmlForm
             ->setSubmitText( $this->msg( 'ai-status-submit' )->text() )
