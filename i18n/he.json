@@ -67,5 +67,6 @@
 	"managefilestatus": "ניהול סטטוס תמונה",
 	"ai-status-submit":"עדכן סטטוס",
 	"ai-status-change-success": "סטטוס התמונה עודכן בהצלחה.",
-	"ai-status-change-failure": "לא ניתן לעדכן את סטטוס התמונה. אנא נסה שוב מאוחר יותר."
+	"ai-status-change-failure": "לא ניתן לעדכן את סטטוס התמונה. אנא נסה שוב מאוחר יותר.",
+	"ai-manage-status-link-text": "ניהול סטטוס תמונה"
 }

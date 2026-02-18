@@ -2,6 +2,8 @@
 
 namespace MediaWiki\Extension\AspaklaryaImages\Hooks;
 
+use MediaWiki\Context\RequestContext;
+use MediaWiki\Extension\AspaklaryaImages\Constants;
 use MediaWiki\Extension\AspaklaryaImages\File;
 use MediaWiki\Extension\AspaklaryaImages\Gallery\NoBrokenImagesGallery;
 use MediaWiki\Extension\AspaklaryaImages\Gallery\NolinesImageGallery;
@@ -11,19 +13,22 @@ use MediaWiki\Extension\AspaklaryaImages\Gallery\PackedOverlayImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\Gallery\SlideshowImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\Specials\SpecialUnknownImages;
 use MediaWiki\Extension\AspaklaryaImages\Gallery\TraditionalImageGallery;
+use MediaWiki\Extension\AspaklaryaImages\Specials\SpecialManageStatus;
 use MediaWiki\Hook\AfterParserFetchFileAndTitleHook;
 use MediaWiki\Hook\GalleryGetModesHook;
 use MediaWiki\Hook\ImageBeforeProduceHTMLHook;
+use MediaWiki\Hook\SkinTemplateNavigation__UniversalHook;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Output\Hook\BeforePageDisplayHook;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Preferences\Hook\GetPreferencesHook;
 use MediaWiki\SpecialPage\Hook\WgQueryPagesHook;
+use MediaWiki\SpecialPage\SpecialPage;
 use MediaWiki\Title\Title;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
 
-class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPreferencesHook, AfterParserFetchFileAndTitleHook, GalleryGetModesHook, WgQueryPagesHook {
+class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPreferencesHook, AfterParserFetchFileAndTitleHook, GalleryGetModesHook, WgQueryPagesHook, SkinTemplateNavigation__UniversalHook {
 	private array $availableOptions = [ 'unknown', 'blocked' ];
 
 	public function __construct( private ILoadBalancer $loadBalancer, private WANObjectCache $cache ) {
@@ -164,5 +169,20 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 	 */
 	public function onWgQueryPages( &$qp ) {
 		$qp[] = [ SpecialUnknownImages::class, 'Unknownfiles' ];
+	}
+
+	/**
+	 * @inheritDoc
+	 */
+	public function onSkinTemplateNavigation__Universal( $sktemplate, &$links ): void {
+		$title = $sktemplate->getTitle();
+		if ( !$title || $title->getNamespace() !== NS_FILE || !$sktemplate->getUser()->isAllowed( Constants::RESTRICTION ) ) {
+			return;
+		}
+		$links['actions']['manage_status'] = [
+			'class' => 'manage-status',
+			'text-message' => 'ai-manage-status-link-text',
+			'href' => SpecialPage::getSafeTitleFor( 'ManageFileStatus', $title->getRootText() )->getLocalUrl(),
+		];
 	}
 }
