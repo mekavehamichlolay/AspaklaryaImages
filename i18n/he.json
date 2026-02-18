@@ -48,5 +48,13 @@
 	"netfree-removed": "ללא סטטוס נטפרי",
 	"authorized-removed": "ללא סטטוס מקומי",
 	"ai-manage-status-authorized-text": "סטטוס מקומי",
-	"ai-manage-status-netfree-text": "סטטוס נטפרי"
+	"ai-manage-status-netfree-text": "סטטוס נטפרי",
+	"ai-manage-status-authorized-leave": "השארת הסטטוס הקיים",
+	"ai-manage-status-authorized-open": "פתוח להצגה מקומית",
+	"ai-manage-status-authorized-blocked": "חסום להצגה מקומית",
+	"ai-manage-status-authorized-none": "ללא סטטוס מקומי",
+	"ai-manage-status-netfree-leave": "השארת הסטטוס הקיים",
+	"ai-manage-status-netfree-open": "פתוח בנטפרי",
+	"ai-manage-status-netfree-blocked": "חסום בנטפרי",
+	"ai-manage-status-netfree-none": "ללא סטטוס נטפרי"
 }
