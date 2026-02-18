@@ -35,7 +35,7 @@ use Wikimedia\Rdbms\IConnectionProvider;
  */
 class SpecialUnknownImages extends QueryPage {
 
-	private Title|null $mTitle;
+	private ?Title $mTitle;
 
 	public function __construct( IConnectionProvider $dbProvider ) {
 		parent::__construct( 'Unknownfiles', Constants::RESTRICTION, true );
@@ -64,10 +64,13 @@ class SpecialUnknownImages extends QueryPage {
 			$title = Title::newFromText( $par );
 			if ( $title && $title->canExist() && $title->getArticleID() > 0 ) {
 				$this->mTitle = $title;
+				$lr = $this->getLinkRenderer();
 				$this->getOutput()->addHTML( Html::rawElement(
 					'p',
 					[],
-					$this->msg( 'aspaklaryaimages-showing-unknown-for-page', [ $title->getPrefixedText() ] )
+					$this->msg( 'aspaklaryaimages-showing-unknown-for-page', 
+					[ $lr->makeKnownLink( $title, $title->getPrefixedText(),[],['action'=>'purge'] ) ] 
+					)
 				) );
 			}
 		}
