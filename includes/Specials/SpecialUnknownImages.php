@@ -23,7 +23,6 @@ namespace MediaWiki\Extension\AspaklaryaImages\Specials;
 use ImageGalleryBase;
 use MediaWiki\Extension\AspaklaryaImages\Constants;
 use MediaWiki\Html\Html;
-use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\SpecialPage\QueryPage;
 use MediaWiki\Title\Title;
 use Wikimedia\Rdbms\IConnectionProvider;
@@ -32,9 +31,11 @@ use Wikimedia\Rdbms\IConnectionProvider;
  * List of file pages which don't have yet a netfree or authorize status
  *
  * @ingroup SpecialPage
- * @author Rob Church <robchur@gmail.com>
+ * @author Mekave Hamichlol <mekave@hamichlol.org.il>
  */
 class SpecialUnknownImages extends QueryPage {
+
+	private Title|null $mTitle;
 
 	public function __construct( IConnectionProvider $dbProvider ) {
 		parent::__construct( 'Unknownfiles', Constants::RESTRICTION, true );
@@ -58,6 +59,12 @@ class SpecialUnknownImages extends QueryPage {
 	}
 
 	public function execute( $par ) {
+		if ( $par ) {
+			$title = Title::newFromText( $par );
+			if ( $title && $title->canExist() && $title->getArticleID() > 0 ) {
+				$this->mTitle = $title;
+			}
+		}
 		parent::execute( $par );
 	}
 
@@ -96,6 +103,28 @@ class SpecialUnknownImages extends QueryPage {
 	}
 
 	public function getQueryInfo() {
+		if ( $this->mTitle ) {
+			return [
+				'tables' => [ 'imagelinks', Constants::IMAGES_TABLE ],
+				'fields' => [
+					'title' => 'il_to',
+					'namespace' => (string)NS_FILE,
+				],
+				'conds' => [
+					Constants::IMAGE_TABLE_TITLE_FIELD => null,
+					'il_from' => $this->mTitle->getArticleID(),
+				],
+				// 'options' => [
+				// 	'DISTINCT'
+				// ],
+				'join_conds' => [
+					Constants::IMAGES_TABLE => [
+						'LEFT JOIN',
+						"il_to = " . Constants::IMAGE_TABLE_TITLE_FIELD,
+					],
+				],
+			];
+		}
 		return [
 			'tables' => [ 'imagelinks', Constants::IMAGES_TABLE ],
 			'fields' => [
