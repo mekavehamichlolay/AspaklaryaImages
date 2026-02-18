@@ -64,6 +64,11 @@ class SpecialUnknownImages extends QueryPage {
 			$title = Title::newFromText( $par );
 			if ( $title && $title->canExist() && $title->getArticleID() > 0 ) {
 				$this->mTitle = $title;
+				$this->getOutput()->addHTML( Html::rawElement(
+					'p',
+					[],
+					$this->msg( 'aspaklaryaimages-showing-unknown-for-page', [ $title->getPrefixedText() ] )->text()
+				) );
 			}
 		}
 		parent::execute( $par );

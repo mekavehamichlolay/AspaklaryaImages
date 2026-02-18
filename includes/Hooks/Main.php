@@ -176,13 +176,23 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 	 */
 	public function onSkinTemplateNavigation__Universal( $sktemplate, &$links ): void {
 		$title = $sktemplate->getTitle();
-		if ( !$title || $title->getNamespace() !== NS_FILE || !$sktemplate->getUser()->isAllowed( Constants::RESTRICTION ) ) {
+		if ( !$title || !$sktemplate->getUser()->isAllowed( Constants::RESTRICTION ) ) {
 			return;
 		}
-		$links['actions']['manage_status'] = [
-			'class' => 'manage-status',
-			'text' => wfMessage( 'ai-manage-status-link-text' ),
-			'href' => SpecialPage::getSafeTitleFor( 'ManageFileStatus', $title->getRootText() )->getLocalUrl(),
-		];
+		if ( $title->getNamespace() === NS_FILE ) {
+			$links['actions']['manage_status'] = [
+				'class' => 'manage-status',
+				'text' => wfMessage( 'ai-manage-status-link-text' ),
+				'href' => SpecialPage::getSafeTitleFor( 'ManageFileStatus', $title->getRootText() )->getLocalUrl(),
+			];
+			return;
+		}
+		if ( $title->getArticleID() > 0 ) {
+			$links['actions']['unknown_images'] = [
+				'class' => 'unknown-images',
+				'text' => wfMessage( 'ai-unknown-images-link-text' ),
+				'href' => SpecialPage::getSafeTitleFor( 'Unknownfiles', $title->getPrefixedText() )->getLocalUrl(),
+			];
+		}
 	}
 }
