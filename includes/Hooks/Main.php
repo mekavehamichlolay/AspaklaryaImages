@@ -126,7 +126,10 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 		$netfreeStatus = $fileClass->getNetfreeStatus();
 		$config = MediaWikiServices::getInstance()->getMainConfig();
 		$blockUnknown = (bool)$config->get( 'BlockNetfreeUnknownImages' );
-		if ( $blockUnknown && !(bool)$netfreeStatus ) {
+		if ( $blockUnknown && 
+			( $netfreeStatus === false || 
+			( $netfreeStatus === null && !(bool)$fileClass->getAuthorizedStatus() ) 
+		) ) {
 			$res = '';
 			return false;
 		}
