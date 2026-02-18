@@ -45,10 +45,7 @@ class FilesMannager {
 		if ( !is_array( $titles ) ) {
 			$titles = explode( '|', $titles );
 		}
-		if ( $titles === null ) {
-			$titles = [];
-		}
-		if ( count( $titles ) === 0 ) {
+		if ( !$titles || count( $titles ) === 0 ) {
 			throw new InvalidArgumentException( 'Titles parameter is required' );
 		}
 		$titles = array_unique( array_filter( $titles ) );
