@@ -181,7 +181,7 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 		}
 		$links['actions']['manage_status'] = [
 			'class' => 'manage-status',
-			'text-message' => 'ai-manage-status-link-text',
+			'text' => wfMessage( 'ai-manage-status-link-text' ),
 			'href' => SpecialPage::getSafeTitleFor( 'ManageFileStatus', $title->getRootText() )->getLocalUrl(),
 		];
 	}
