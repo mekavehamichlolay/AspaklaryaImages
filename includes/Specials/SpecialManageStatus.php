@@ -105,7 +105,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 			'id' => 'wpNetfree',
 			'flatlist' => true,
 			'name' => 'wpNetfree',
-            'default' => '',
+            // 'default' => '',
 		];
         
         foreach ( Constants::NETFREE_OPTIONS as $index => $option ) {
@@ -121,7 +121,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 			'id' => 'wpAuthorized',
 			'flatlist' => true,
 			'name' => 'wpAuthorized',
-            'default' => '',
+            // 'default' => '',
 		];
         foreach ( Constants::AUTHORIZED_OPTIONS as $index => $option ) {
             $authorizedRadio[ 'options-messages' ][ 'ai-manage-status-authorized-' . $option || 'leave' ] = $index;
