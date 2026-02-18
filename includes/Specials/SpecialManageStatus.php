@@ -108,13 +108,13 @@ class SpecialManageStatus extends UnlistedSpecialPage {
             'default' => '',
 		];
         
-        foreach ( Constants::NETFREE_OPTIONS as $option ) {
-            $netfreeRadio[ 'options-messages' ][] = [ 'ai-manage-status-netfree-' . $option || 'leave' => $option ];
+        foreach ( Constants::NETFREE_OPTIONS as $index => $option ) {
+            $netfreeRadio[ 'options-messages' ][] = [ 'ai-manage-status-netfree-' . $option || 'leave' => $index ];
         }
         if ( $this->wasSaved ) {
-            $netfreeRadio['default'] = Constants::getTextOptionFromBool( $this->file->getNetfreeStatus() );
+            $netfreeRadio['default'] = array_flip( Constants::NETFREE_OPTIONS )[ Constants::getTextOptionFromBool( $this->file->getNetfreeStatus() ) ];
         }
-        // $fields[] = $netfreeRadio;
+        $fields[] = $netfreeRadio;
         $authorizedRadio = [
         	'type' => 'radio',
 			'label-raw' => $this->msg( 'ai-manage-status-authorized-text' )->escaped(),
@@ -123,14 +123,14 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 			'name' => 'wpAuthorized',
             'default' => '',
 		];
-        foreach ( Constants::AUTHORIZED_OPTIONS as $option ) {
-            $authorizedRadio[ 'options-messages' ][] = [ 'ai-manage-status-authorized-' . $option || 'leave' => $option ];
+        foreach ( Constants::AUTHORIZED_OPTIONS as $index => $option ) {
+            $authorizedRadio[ 'options-messages' ][] = [ 'ai-manage-status-authorized-' . $option || 'leave' => $index ];
         }
         
         if ( $this->wasSaved ) {
-            $authorizedRadio['default'] = Constants::getTextOptionFromBool( $this->file->getAuthorizedStatus() );
+            $authorizedRadio['default'] = array_flip( Constants::AUTHORIZED_OPTIONS )[ Constants::getTextOptionFromBool( $this->file->getAuthorizedStatus() ) ];
         }
-        // $fields[] = $authorizedRadio;
+        $fields[] = $authorizedRadio;
         $htmlForm = HTMLForm::factory( 'ooui', $fields, $this->getContext() );
         $htmlForm
             ->setSubmitText( $this->msg( 'ai-status-submit' )->text() )
@@ -150,22 +150,24 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 			return false;
 		}
 
-        $netfreeStatus = $this->getRequest()->getText( 'wpNetfree' );
-        $authorizedStatus = $this->getRequest()->getText( 'wpAuthorized' );
+        $netfreeStatus = $this->getRequest()->getInt( 'wpNetfree' );
+        $authorizedStatus = $this->getRequest()->getInt( 'wpAuthorized' );
 
-        if ( $netfreeStatus === '' && $authorizedStatus === '' ) {
+        if ( $netfreeStatus === 0 && $authorizedStatus === 0 ) {
             $this->noChange();
             return;
         }
         if ( !$this->getUser()->authorizeAction( Constants::RESTRICTION ) ) {
             throw new PermissionsError( Constants::RESTRICTION );
         }
-        if ( $netfreeStatus !== '' && !in_array( $netfreeStatus, Constants::NETFREE_OPTIONS, true ) ) {
+        if ( $netfreeStatus < 0 || $netfreeStatus > count( Constants::NETFREE_OPTIONS ) ) {
             throw new ErrorPageError( 'ai-manage-status-invalid-netfree-title', 'ai-manage-status-invalid-netfree-text' );
         }
-        if ( $authorizedStatus !== '' && !in_array( $authorizedStatus, Constants::AUTHORIZED_OPTIONS, true ) ) {
+        if ( $authorizedStatus < 0 || $authorizedStatus > count( Constants::AUTHORIZED_OPTIONS ) ) {
             throw new ErrorPageError( 'ai-manage-status-invalid-authorized-title', 'ai-manage-status-invalid-authorized-text' );
         }
+        $netfreeStatus = Constants::NETFREE_OPTIONS[ $netfreeStatus ];
+        $authorizedStatus = Constants::AUTHORIZED_OPTIONS[ $authorizedStatus ];
         $changed = false;
         if ( $netfreeStatus !== '' ) {
             $netfreeCurrent = Constants::getTextOptionFromBool( $this->file->getNetfreeStatus() );
