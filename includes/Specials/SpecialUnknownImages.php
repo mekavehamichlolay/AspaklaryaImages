@@ -67,7 +67,7 @@ class SpecialUnknownImages extends QueryPage {
 				$this->getOutput()->addHTML( Html::rawElement(
 					'p',
 					[],
-					$this->msg( 'aspaklaryaimages-showing-unknown-for-page', [ $title->getPrefixedText() ] )->text()
+					$this->msg( 'aspaklaryaimages-showing-unknown-for-page', [ $title->getPrefixedText() ] )
 				) );
 			}
 		}
