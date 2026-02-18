@@ -1,6 +1,6 @@
 <?php
 
-namespace MediaWiki\Extension\AspaklaryaImages;
+namespace MediaWiki\Extension\AspaklaryaImages\Gallery;
 
 use SlideshowImageGallery as GlobalSlideshowImageGallery;
 

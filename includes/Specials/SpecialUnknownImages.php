@@ -18,9 +18,10 @@
  * @file
  */
 
-namespace MediaWiki\Extension\AspaklaryaImages;
+namespace MediaWiki\Extension\AspaklaryaImages\Specials;
 
 use ImageGalleryBase;
+use MediaWiki\Extension\AspaklaryaImages\Constants;
 use MediaWiki\Html\Html;
 use MediaWiki\HTMLForm\HTMLForm;
 use MediaWiki\SpecialPage\QueryPage;

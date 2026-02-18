@@ -3,14 +3,14 @@
 namespace MediaWiki\Extension\AspaklaryaImages\Hooks;
 
 use MediaWiki\Extension\AspaklaryaImages\File;
-use MediaWiki\Extension\AspaklaryaImages\NoBrokenImagesGallery;
-use MediaWiki\Extension\AspaklaryaImages\NolinesImageGallery;
-use MediaWiki\Extension\AspaklaryaImages\PackedHoverImageGallery;
-use MediaWiki\Extension\AspaklaryaImages\PackedImageGallery;
-use MediaWiki\Extension\AspaklaryaImages\PackedOverlayImageGallery;
-use MediaWiki\Extension\AspaklaryaImages\SlideshowImageGallery;
-use MediaWiki\Extension\AspaklaryaImages\SpecialUnknownImages;
-use MediaWiki\Extension\AspaklaryaImages\TraditionalImageGallery;
+use MediaWiki\Extension\AspaklaryaImages\Gallery\NoBrokenImagesGallery;
+use MediaWiki\Extension\AspaklaryaImages\Gallery\NolinesImageGallery;
+use MediaWiki\Extension\AspaklaryaImages\Gallery\PackedHoverImageGallery;
+use MediaWiki\Extension\AspaklaryaImages\Gallery\PackedImageGallery;
+use MediaWiki\Extension\AspaklaryaImages\Gallery\PackedOverlayImageGallery;
+use MediaWiki\Extension\AspaklaryaImages\Gallery\SlideshowImageGallery;
+use MediaWiki\Extension\AspaklaryaImages\Specials\SpecialUnknownImages;
+use MediaWiki\Extension\AspaklaryaImages\Gallery\TraditionalImageGallery;
 use MediaWiki\Hook\AfterParserFetchFileAndTitleHook;
 use MediaWiki\Hook\GalleryGetModesHook;
 use MediaWiki\Hook\ImageBeforeProduceHTMLHook;

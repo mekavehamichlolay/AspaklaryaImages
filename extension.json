@@ -94,7 +94,7 @@
 	},
 	"SpecialPages": {
 		"Unknownfiles": {
-			"class": "MediaWiki\\Extension\\AspaklaryaImages\\SpecialUnknownImages",
+			"class": "MediaWiki\\Extension\\AspaklaryaImages\\Specials\\SpecialUnknownImages",
 			"services": [
 				"ConnectionProvider"
 			]
