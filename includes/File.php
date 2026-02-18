@@ -237,7 +237,7 @@ class File {
 	}
 
 	public static function publishLog( LinkTarget|PageReference $title, string $logType, string $parameter, UserIdentity $performer, array $relations = [] ): int {
-		$logEntry = new ManualLogEntry( 'aspaklaryaimages', $logType );
+		$logEntry = new ManualLogEntry( Constants::LOG_NAME, $logType );
 		$logEntry->setTarget( $title );
 		$logEntry->setPerformer( $performer );
 		$logEntry->setRelations( $relations );

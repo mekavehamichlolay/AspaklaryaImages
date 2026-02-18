@@ -32,6 +32,8 @@ class Constants {
 	public const CACHE_KEY_PREFIX = 'aspaklaryaimages';
 	public const CACHE_KEY_VERSION = 'v1';
 
+	public const LOG_NAME = 'aspaklaryaimages';
+
 	public static function makeCacheKey( WANObjectCache $cache, string $title ): string {
 		return $cache->makeKey( self::CACHE_KEY_PREFIX, self::CACHE_KEY_VERSION, $title );
 	}
