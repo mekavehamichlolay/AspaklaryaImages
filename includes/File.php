@@ -199,7 +199,7 @@ class File {
  			);
 			$newId = $db->insertId();
 			$logType = 'insert';
-			$logs[] = self::publishLog( $this->title, $logType, '', $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
+			// $logs[] = self::publishLog( $this->title, $logType, '', $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
 			if ( Constants::isNetfreeKnown( $newStatusBits ) ) {
 				$logParameters['netfree'] = Constants::isNetfreeOpen( $newStatusBits ) ? 'open' : 'blocked';
 			}
@@ -241,7 +241,7 @@ class File {
 		}
 
 		foreach ( $logParameters as $key => $value ) {
-			$logs[] = self::publishLog( $this->title, 'update', "$key-$value", $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
+			$logs[] = self::publishLog( $this->title, $logType || 'update', "$key-$value", $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
 		}
 		$this->invalidateCache();
 		return Status::newGood( $logs );
