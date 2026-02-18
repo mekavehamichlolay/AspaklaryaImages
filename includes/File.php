@@ -2,6 +2,7 @@
 
 namespace MediaWiki\Extension\AspaklaryaImages;
 
+use MediaWiki\Exception\PermissionsError;
 use MediaWiki\FileRepo\File\File as FileRepoFile;
 use MediaWiki\Linker\LinkTarget;
 use MediaWiki\Logging\ManualLogEntry;
@@ -56,7 +57,7 @@ class File {
 			} );
 			return $this;
 		}
-		$this->statusBits = $this->getFromDb();
+		$this->statusBits = $this->getFromDb( DB_PRIMARY );
 		return $this;
 	}
 
@@ -107,6 +108,11 @@ class File {
 		return $this;
 	}
 
+	public function deleteNetfreeStatus(): self {
+		$this->statusBits &= ~( Constants::NETFREE_KNOWN_BIT | Constants::NETFREE_OPEN_BIT );
+		return $this;
+	}
+
 	public function setAuthorizedStatus( bool $open ): self {
 		$this->statusBits |= Constants::AUTHORIZED_KNOWN_BIT;
 
@@ -118,9 +124,14 @@ class File {
 		return $this;
 	}
 
+	public function deleteAuthorizedStatus(): self {
+		$this->statusBits &= ~( Constants::AUTHORIZED_KNOWN_BIT | Constants::AUTHORIZED_OPEN_BIT );
+		return $this;
+	}
+
 	public function updateStatus( User $performer ): Status {
-		if ( !$performer->isAllowed( Constants::RESTRICTION ) ) {
-			return Status::newFatal( wfMessage( 'aspaklaryaimages-permissiondenied' ) );
+		if ( !$performer->authorizeAction( Constants::RESTRICTION ) ) {
+			throw new PermissionsError( Constants::RESTRICTION );
 		}
 		return $this->saveStatus( $this->statusBits, $performer );
 	}

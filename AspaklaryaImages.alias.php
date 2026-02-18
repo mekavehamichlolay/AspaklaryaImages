@@ -14,6 +14,7 @@ $specialPageAliases = [];
  */
 $specialPageAliases['en'] = [
 	'Unknownfiles' => [ 'Unknown files', 'Unknownfiles', 'UnknownFiles' ],
+	'ManageFileStatus' => [ 'Manage file status', 'ManageFileStatus', 'Managefilestatus' ],
 ];
 
 /** Hebrew (עברית)
@@ -21,4 +22,5 @@ $specialPageAliases['en'] = [
  */
 $specialPageAliases['he'] = [
 	'Unknownfiles' => [ 'קבצים ללא הגדרה' ],
+	'ManageFileStatus' => [ 'ניהול סטטוס קובץ' ],
 ];

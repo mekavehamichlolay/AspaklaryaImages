@@ -58,7 +58,13 @@ class Constants {
 		return (
 			( ( $bits & self::NETFREE_KNOWN_BIT ) !== 0 || ( $bits & self::NETFREE_OPEN_BIT ) === 0 ) &&
 			( ( $bits & self::AUTHORIZED_KNOWN_BIT ) !== 0 || ( $bits & self::AUTHORIZED_OPEN_BIT ) === 0 )
- );
+ 		);
 	}
 
+	public static function getTextOptionFromBool( ?bool $value ): string {
+		if ( $value === null ) {
+			return 'none';
+		}
+		return $value ? 'open' : 'blocked';
+	}
 }
