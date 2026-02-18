@@ -91,7 +91,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 
     private function showForm(){
         $out = $this->getOutput();
-        $out->addWikiMsg( 'ai-manage-status-summary' );
+        $out->addWikiMsg( 'ai-manage-status-summary', $this->title->getPrefixedText() );
        
         $fields = [];
         $fields[] = [
@@ -105,10 +105,13 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 			'id' => 'wpNetfree',
 			'flatlist' => true,
 			'name' => 'wpNetfree',
-            // 'default' => '',
+            'default' => 0,
 		];
         
         foreach ( Constants::NETFREE_OPTIONS as $index => $option ) {
+            if ( $option === '' ) {
+                $option = 'leave';
+            }
             $netfreeRadio[ 'options-messages' ][ "ai-manage-status-netfree-{$option}" ] = $index;
         }
         if ( $this->wasSaved ) {
@@ -121,9 +124,12 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 			'id' => 'wpAuthorized',
 			'flatlist' => true,
 			'name' => 'wpAuthorized',
-            // 'default' => '',
+            'default' => 0,
 		];
         foreach ( Constants::AUTHORIZED_OPTIONS as $index => $option ) {
+            if ( $option === '' ) {
+                $option = 'leave';
+            }
             $authorizedRadio[ 'options-messages' ][ "ai-manage-status-authorized-{$option}" ] = $index;
         }
         
