@@ -70,7 +70,7 @@ class SpecialUnknownImages extends QueryPage {
 					[],
 					$this->msg( 'aspaklaryaimages-showing-unknown-for-page', 
 					[ $lr->makeKnownLink( $title, $title->getPrefixedText(),[],['action'=>'purge'] ) ] 
-					)
+					)->text()
 				) );
 			}
 		}
