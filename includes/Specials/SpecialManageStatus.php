@@ -109,12 +109,12 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 		];
         
         foreach ( Constants::NETFREE_OPTIONS as $index => $option ) {
-            $netfreeRadio[ 'options-messages' ][ 'ai-manage-status-netfree-' . $option || 'leave' ] = $index;
+            $netfreeRadio[ 'options-messages' ][ "ai-manage-status-netfree-{$option}" ] = $index;
         }
         if ( $this->wasSaved ) {
             // $netfreeRadio['default'] = array_flip( Constants::NETFREE_OPTIONS )[ Constants::getTextOptionFromBool( $this->file->getNetfreeStatus() ) ];
         }
-        // $fields[] = $netfreeRadio;
+        $fields[] = $netfreeRadio;
         $authorizedRadio = [
         	'type' => 'radio',
 			'label-raw' => $this->msg( 'ai-manage-status-authorized-text' )->escaped(),
@@ -124,7 +124,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
             // 'default' => '',
 		];
         foreach ( Constants::AUTHORIZED_OPTIONS as $index => $option ) {
-            $authorizedRadio[ 'options-messages' ][ 'ai-manage-status-authorized-' . $option || 'leave' ] = $index;
+            $authorizedRadio[ 'options-messages' ][ "ai-manage-status-authorized-{$option}" ] = $index;
         }
         
         if ( $this->wasSaved ) {
