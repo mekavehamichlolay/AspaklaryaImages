@@ -52,13 +52,13 @@ class SpecialManageStatus extends UnlistedSpecialPage {
         if ( $par ) {
             $titleText = $par;  
         } else {
-            $titleText = trim( $request->getText( 'title' ) );
+            $titleText = trim( $request->getText( 'target' ) );
         }
         if ( !$titleText ) {
             throw new ErrorPageError( 'ai-manage-status-no-title-title', 'ai-manage-status-no-title-text' );
         }
         $this->title = FileRepoFile::normalizeTitle( $titleText );
-        if ( !$this->title || !$this->title->canExist() ) {
+        if ( !$this->title || !$this->title->canExist() || !$this->title->getArticleID() < 0 ) {
             throw new ErrorPageError( 'ai-manage-status-invalid-title-title', 'ai-manage-status-invalid-title-text' );
         }
         if ( $this->permissionManager->isBlockedFrom( $user, $this->title, !$this->submitClicked ) ) {
@@ -96,7 +96,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
         $fields = [];
         $fields[] = [
 				'type' => 'hidden',
-				'name' => 'title',
+				'name' => 'target',
 				'default' => $this->title->getText(),
 		];
         $netfreeRadio = [
@@ -112,7 +112,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
             $netfreeRadio[ 'options-messages' ][ "ai-manage-status-netfree-{$option}" ] = $index;
         }
         if ( $this->wasSaved ) {
-            // $netfreeRadio['default'] = array_flip( Constants::NETFREE_OPTIONS )[ Constants::getTextOptionFromBool( $this->file->getNetfreeStatus() ) ];
+            $netfreeRadio['default'] = array_flip( Constants::NETFREE_OPTIONS )[ Constants::getTextOptionFromBool( $this->file->getNetfreeStatus() ) ];
         }
         $fields[] = $netfreeRadio;
         $authorizedRadio = [
@@ -128,7 +128,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
         }
         
         if ( $this->wasSaved ) {
-            // $authorizedRadio['default'] = array_flip( Constants::AUTHORIZED_OPTIONS )[ Constants::getTextOptionFromBool( $this->file->getAuthorizedStatus() ) ];
+            $authorizedRadio['default'] = array_flip( Constants::AUTHORIZED_OPTIONS )[ Constants::getTextOptionFromBool( $this->file->getAuthorizedStatus() ) ];
         }
         $fields[] = $authorizedRadio;
         $htmlForm = HTMLForm::factory( 'ooui', $fields, $this->getContext() );
