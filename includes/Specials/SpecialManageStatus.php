@@ -132,6 +132,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
         }
         $fields[] = $authorizedRadio;
         $htmlForm = HTMLForm::factory( 'ooui', $fields, $this->getContext() );
+        
         $htmlForm
             ->setSubmitText( $this->msg( 'ai-status-submit' )->text() )
             ->setSubmitName( 'wpSubmit' )
