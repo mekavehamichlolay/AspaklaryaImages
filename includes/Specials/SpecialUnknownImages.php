@@ -40,6 +40,7 @@ class SpecialUnknownImages extends QueryPage {
 	public function __construct( IConnectionProvider $dbProvider ) {
 		parent::__construct( 'Unknownfiles', Constants::RESTRICTION, true );
 		$this->setDatabaseProvider( $dbProvider );
+		$this->mTitle = null;
 	}
 
 	protected function sortDescending() {
