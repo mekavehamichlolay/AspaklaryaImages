@@ -114,7 +114,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
         if ( $this->wasSaved ) {
             // $netfreeRadio['default'] = array_flip( Constants::NETFREE_OPTIONS )[ Constants::getTextOptionFromBool( $this->file->getNetfreeStatus() ) ];
         }
-        $fields[] = $netfreeRadio;
+        // $fields[] = $netfreeRadio;
         $authorizedRadio = [
         	'type' => 'radio',
 			'label-raw' => $this->msg( 'ai-manage-status-authorized-text' )->escaped(),
