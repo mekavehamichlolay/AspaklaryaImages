@@ -72,5 +72,7 @@
 	"ai-manage-status-link-text": "ניהול סטטוס תמונה",
 	"manage-status": "ניהול סטטוס תמונה",
 	"ai-status-legend":"הגדר סטטוס או השאר ללא שינוי",
-	"ai-unknown-images-link-text": "הצג תמונות עם סטטוס נטפרי לא ידוע בדף הנוכחי"
+	"ai-unknown-images-link-text": "הצג תמונות עם סטטוס נטפרי לא ידוע בדף הנוכחי",
+	"aspaklaryaimages-authrized-options": "מקומי",
+	"aspaklaryaimages-netfree-options": "נטפרי"
 }
