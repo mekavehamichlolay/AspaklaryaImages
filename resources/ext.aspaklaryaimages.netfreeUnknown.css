@@ -16,3 +16,6 @@
     margin: 5px;
     padding: 5px;
 }
+.main-option-box {
+    display: flex;
+}
