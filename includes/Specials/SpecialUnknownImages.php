@@ -164,32 +164,65 @@ class SpecialUnknownImages extends QueryPage {
 	}
 
     protected function getCellHtml( $row ) {
-        $radioButtons = [];
+        $netfreeRadioButtons = [];
         foreach ( Constants::NETFREE_OPTIONS as $option ) {
             if ( !$option ) {
                 continue;
             }
-            $radioButtons[] = Html::rawElement('span', ['class' => 'netfree-option'], Html::rawElement(
+            $netfreeRadioButtons[] = Html::rawElement('span', ['class' => 'netfree-option'], Html::rawElement(
                     'input',
                     [
                         'type' => 'radio',
-                        'name' => $row->title,
-                        'value' => $option,
+                        'name' => 'n-'.$row->title,
+                        'value' => 'n-'.$option,
                         'form' => "aspaklaryaimages-netfree-form",
                         'checked' => $option === 'none' ? 'checked' : null,
+						'id' => "n-{$option}-{$row->title}",
                     ]
             )
             . Html::rawElement(
                 'label',
-                [ 'for' => "{$option}-{$row->title}" ],
+                [ 'for' => "n-{$option}-{$row->title}" ],
                 $this->msg( "aspaklaryaimages-option-$option" )->text()
             ) );
         }
-        return Html::rawElement( 
-            'div', 
-            ['id' => "aspaklaryaimages-netfree-options-{$row->title}", 'class' => 'netfree-option-box'], 
-            implode( '', $radioButtons ) 
-        );
+		$authorizedRadioButtons = [];
+        foreach ( Constants::AUTHORIZED_OPTIONS as $option ) {
+            if ( !$option ) {
+                continue;
+            }
+            $authorizedRadioButtons[] = Html::rawElement('span', ['class' => 'authorized-option'], Html::rawElement(
+                    'input',
+                    [
+                        'type' => 'radio',
+                        'name' => 'a-'.$row->title,
+                        'value' => 'a-'.$option,
+                        'form' => "aspaklaryaimages-netfree-form",
+                        'checked' => $option === 'none' ? 'checked' : null,
+						'id' => "a-{$option}-{$row->title}",
+                    ]
+            )
+            . Html::rawElement(
+                'label',
+                [ 'for' => "a-{$option}-{$row->title}" ],
+                $this->msg( "aspaklaryaimages-option-$option" )->text()
+            ) );
+        }
+		return Html::rawElement(
+			'div',
+			[ 'class' => 'main-option-box' ],
+			Html::rawElement(
+				'div',
+				['class' => 'authorized-option-box'],
+				Html::rawElement( 'h6', [], $this->msg( 'aspaklaryaimages-authorized-options' )->text() ) .
+				implode( '', $authorizedRadioButtons )
+			) . Html::rawElement( 
+				'div', 
+				['class' => 'netfree-option-box'], 
+				Html::rawElement( 'h6', [], $this->msg( 'aspaklaryaimages-netfree-options' )->text() ) .
+				implode( '', $netfreeRadioButtons ) 
+        	)
+		) ;
     }
 }
 

@@ -1,13 +1,13 @@
-.netfree-option{
+.netfree-option, .authorized-option{
     display: flex;
 }
-.netfree-option input[type="radio"] {
+.netfree-option input[type="radio"], .authorized-option input[type="radio"] {
     margin-right: 5px;
 }
-.netfree-option label {
+.netfree-option label, .authorized-option label {
     margin: 0;
 }
-.netfree-option-box{
+.netfree-option-box, .authorized-option-box{
     display: flex;
     flex-direction: column;
 }

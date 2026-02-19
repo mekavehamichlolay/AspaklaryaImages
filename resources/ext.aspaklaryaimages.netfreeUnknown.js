@@ -10,18 +10,34 @@
     const openNames = [];
     document
       .querySelectorAll(
-        `input[form="${formId}"][type="radio"][value="open"]:checked`,
+        `input[form="${formId}"][type="radio"][value="n-open"]:checked`,
       )
       .forEach((input) => {
-        openNames.push(input.name);
+        openNames.push(input.name.substring(2));
       });
     const blockedNames = [];
     document
       .querySelectorAll(
-        `input[form="${formId}"][type="radio"][value="blocked"]:checked`,
+        `input[form="${formId}"][type="radio"][value="n-blocked"]:checked`,
       )
       .forEach((input) => {
-        blockedNames.push(input.name);
+        blockedNames.push(input.name.substring(2));
+      });
+    const aOpenNames = [];
+    const aBlockedNames = [];
+    document
+      .querySelectorAll(
+        `input[form="${formId}"][type="radio"][value="a-open"]:checked`,
+      )
+      .forEach((input) => {
+        aOpenNames.push(input.name.substring(2));
+      });
+    document
+      .querySelectorAll(
+        `input[form="${formId}"][type="radio"][value="a-blocked"]:checked`,
+      )
+      .forEach((input) => {
+        aBlockedNames.push(input.name.substring(2));
       });
     const api = new mw.Api();
     if (openNames.length > 0) {
@@ -29,6 +45,12 @@
     }
     if (blockedNames.length > 0) {
       sendApi(blockedNames, "blocked", api);
+    }
+    if (aOpenNames.length > 0) {
+      sendApi(aOpenNames, "a-open", api);
+    }
+    if (aBlockedNames.length > 0) {
+      sendApi(aBlockedNames, "a-blocked", api);
     }
   }
   /**
@@ -43,11 +65,21 @@
         imageNames.length > 25 ? imageNames.length - 25 : 0,
         25,
       );
+      const state = {};
+      if (status.startsWith("a-")) {
+        state = {
+          authorized: status.substring(2),
+        };
+      } else {
+        state = {
+          netfree: status,
+        };
+      }
       api
         .postWithToken("csrf", {
           action: "aspaklaryaimages-manage-status",
           titles: images.join("|"),
-          netfree: status,
+          ...state,
         })
         .done((data) => {
           if (data?.["aspaklaryaimages-status"]?.updated) {
@@ -77,8 +109,8 @@
   netfreeAutoButton.textContent = "זיהוי אוטומטי";
   netfreeAutoButton.classList.add("netfree-auto-button");
   netfreeAutoButton.addEventListener("click", async () => {
-    const blockedSelector = 'input[type="radio"][value="blocked"]';
-    const openSelector = 'input[type="radio"][value="open"]';
+    const blockedSelector = 'input[type="radio"][value="n-blocked"]';
+    const openSelector = 'input[type="radio"][value="n-open"]';
 
     const listItems = document.querySelectorAll("li.gallerybox");
     for (const li of listItems) {
@@ -126,7 +158,7 @@
   openButton.type = "button";
   openButton.addEventListener("click", () => {
     document
-      .querySelectorAll(`input[form=${formId}][type=radio][value=open]`)
+      .querySelectorAll(`input[form=${formId}][type=radio][value="n-open"]`)
       .forEach((input) => {
         input.checked = true;
       });
@@ -139,16 +171,16 @@
     document
       .querySelectorAll(`input[form=${formId}][type=radio]:checked`)
       .forEach((input) => {
-        if (input.value === "open") {
+        if (input.value === "n-open") {
           input.checked = false;
           const blockedInput = document.querySelector(
-            `input[type=radio][name=${JSON.stringify(input.name)}][value=blocked]`,
+            `input[type=radio][name=${JSON.stringify(input.name)}][value="n-blocked"]`,
           );
           if (blockedInput) blockedInput.checked = true;
-        } else if (input.value === "blocked") {
+        } else if (input.value === "n-blocked") {
           input.checked = false;
           const openInput = document.querySelector(
-            `input[type=radio][name=${JSON.stringify(input.name)}][value=open]`,
+            `input[type=radio][name=${JSON.stringify(input.name)}][value="n-open"]`,
           );
           if (openInput) openInput.checked = true;
         }
