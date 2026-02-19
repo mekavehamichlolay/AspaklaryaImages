@@ -67,13 +67,9 @@
       );
       const state = {};
       if (status.startsWith("a-")) {
-        state = {
-          authorized: status.substring(2),
-        };
+        state["authorized"] = status.substring(2);
       } else {
-        state = {
-          netfree: status,
-        };
+        state["netfree"] = status;
       }
       api
         .postWithToken("csrf", {
