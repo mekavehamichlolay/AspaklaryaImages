@@ -81,7 +81,7 @@
           if (data?.["aspaklaryaimages-status"]?.updated) {
             for (const title in data["aspaklaryaimages-status"].updated) {
               const li = document
-                .getElementById(`aspaklaryaimages-netfree-options-${title}`)
+                .getElementById(`n-open-${title}`)
                 ?.closest("li.gallerybox");
               if (li) {
                 li.parentNode.removeChild(li);
