@@ -88,7 +88,7 @@
 	"LogRestrictions": {},
 	"Actions": {},
 	"APIModules": {
-		"aspaklaryaimages-manage-status": "MediaWiki\\Extension\\AspaklaryaImages\\ApiAIStatusMannage"
+		"aspaklaryaimages-manage-status": "MediaWiki\\Extension\\AspaklaryaImages\\ApiAIStatusManage"
 	},
 	"ExtensionMessagesFiles": {
 		"AspaklaryaImagesAlias": "AspaklaryaImages.alias.php"

@@ -8,7 +8,7 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\TitleValue;
 use Wikimedia\ParamValidator\ParamValidator;
 
-class ApiAIStatusMannage extends ApiBase {
+class ApiAIStatusManage extends ApiBase {
 
 	/** @var string[] */
 	private $titles = [];
@@ -51,7 +51,7 @@ class ApiAIStatusMannage extends ApiBase {
 		}
 		$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
-		$result = FilesMannager::updateMultiStatus( $lb, $cache, $this->getAuthority(), $this->titles, $netfree, $authorized );
+		$result = FilesManager::updateMultiStatus( $lb, $cache, $this->getAuthority(), $this->titles, $netfree, $authorized );
 		if ( isset( $result[0] ) && $result[0] instanceof Status && !$result[0]->isOK() ) {
 			$this->dieWithError( $result[0]->getValue() );
 		}
