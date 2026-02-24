@@ -13,14 +13,14 @@ $specialPageAliases = [];
  * @author Mekave
  */
 $specialPageAliases['en'] = [
-	'Unknownfiles' => [ 'Unknown files', 'Unknownfiles', 'UnknownFiles' ],
-	'ManageFileStatus' => [ 'Manage file status', 'ManageFileStatus', 'Managefilestatus' ],
+	'Unknownfiles' => [ 'Unknown files', 'UnknownFiles' ],
+	'ManageFileStatus' => [ 'Manage file status', 'ManageFileStatus' ],
 ];
 
 /** Hebrew (עברית)
  * @author Mekave
  */
 $specialPageAliases['he'] = [
-	'Unknownfiles' => [ 'קבצים ללא הגדרה' ],
-	'ManageFileStatus' => [ 'ניהול סטטוס קובץ' ],
+	'Unknownfiles' => [ 'תמונות ללא הגדרה', 'קבצים ללא הגדרה' ],
+	'ManageFileStatus' => [ 'ניהול סטטוס קובץ', 'ניהול סטטוס תמונה' ],
 ];

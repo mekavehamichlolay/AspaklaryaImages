@@ -8,7 +8,7 @@ use MediaWiki\Status\Status;
 use MediaWiki\Title\TitleValue;
 use Wikimedia\ParamValidator\ParamValidator;
 
-class ApiAIStatusMannage extends ApiBase {
+class ApiAIStatusManage extends ApiBase {
 
 	/** @var string[] */
 	private $titles = [];
@@ -43,16 +43,16 @@ class ApiAIStatusMannage extends ApiBase {
 		if ( $authorized !== '' && !in_array( $authorized, Constants::AUTHORIZED_OPTIONS, true ) ) {
 			$this->dieWithError( 'apierror-aspaklaryaimages-invalidauthorizedoption' );
 		}
-		if ($netfree === 'none') {
+		if ( $netfree === 'none' ) {
 			$netfree = null;
 		}
-		if ($authorized === 'none') {
+		if ( $authorized === 'none' ) {
 			$authorized = null;
 		}
 		$lb = MediaWikiServices::getInstance()->getDBLoadBalancer();
 		$cache = MediaWikiServices::getInstance()->getMainWANObjectCache();
-		$result = FilesMannager::updateMultiStatus( $lb, $cache, $this->getAuthority(), $this->titles, $netfree, $authorized );
-		if ( isset($result[0]) && $result[0] instanceof Status && !$result[0]->isOK() ) {
+		$result = FilesManager::updateMultiStatus( $lb, $cache, $this->getAuthority(), $this->titles, $netfree, $authorized );
+		if ( isset( $result[0] ) && $result[0] instanceof Status && !$result[0]->isOK() ) {
 			$this->dieWithError( $result[0]->getValue() );
 		}
 		foreach ( $result[1] as $title => $action ) {
@@ -82,7 +82,7 @@ class ApiAIStatusMannage extends ApiBase {
 		} elseif ( $authorized === 'blocked' ) {
 			$logAction[] = 'authorized-blocked';
 		}
-		if ( $action === 'update') {
+		if ( $action === 'update' ) {
 			if ( $netfree === 'none' ) {
 				$logAction[] = 'netfree-removed';
 			}

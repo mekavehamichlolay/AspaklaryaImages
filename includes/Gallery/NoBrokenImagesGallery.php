@@ -3,7 +3,6 @@
 namespace MediaWiki\Extension\AspaklaryaImages\Gallery;
 
 use ImageGalleryBase;
-use MediaTransformError;
 use MediaTransformOutput;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
@@ -12,11 +11,10 @@ use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Title\Title;
-use Wikimedia\Assert\Assert;
 
 class NoBrokenImagesGallery extends TraditionalImageGallery {
 
-    public function toHTML() {
+	public function toHTML() {
 		$resolveFilesViaParser = $this->mParser instanceof Parser;
 		if ( $resolveFilesViaParser ) {
 			$parserOutput = $this->mParser->getOutput();
@@ -96,7 +94,7 @@ class NoBrokenImagesGallery extends TraditionalImageGallery {
 
 			if ( !$img || !$thumb || ( !$enableLegacyMediaDOM && $thumb->isError() ) || $isBadFile ) {
 				continue;
-            } else {
+			} else {
 				/** @var MediaTransformOutput $thumb */
 				$vpad = $this->getVPad( $this->mHeights, $thumb->getHeight() );
 
@@ -171,8 +169,6 @@ class NoBrokenImagesGallery extends TraditionalImageGallery {
 						$img, [ 'handler' => $imageParameters ], $thumbhtml );
 				}
 			}
-
-		
 
 			$galleryText = $this->wrapGalleryText( $text, $thumb );
 
