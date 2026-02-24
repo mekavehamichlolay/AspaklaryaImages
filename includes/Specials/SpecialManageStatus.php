@@ -58,7 +58,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 			throw new ErrorPageError( 'ai-manage-status-no-title-title', 'ai-manage-status-no-title-text' );
 		}
 		$this->title = FileRepoFile::normalizeTitle( $titleText );
-		if ( !$this->title || !$this->title->canExist() || $this->title->getArticleID() <= 0 ) {
+		if ( !$this->title || !$this->title->canExist() ) {
 			throw new ErrorPageError( 'ai-manage-status-invalid-title-title', 'ai-manage-status-invalid-title-text' );
 		}
 		if ( $this->permissionManager->isBlockedFrom( $user, $this->title, !$this->submitClicked ) ) {
