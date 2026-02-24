@@ -196,7 +196,7 @@ class File {
 				Constants::IMAGES_TABLE,
 				[ Constants::IMAGE_TABLE_TITLE_FIELD => $this->title->getDBKey(), Constants::IMAGE_TABLE_STATUS_FIELD => $newStatusBits ],
 				__METHOD__
- 			);
+			);
 			$newId = $db->insertId();
 			$logType = 'insert';
 			// $logs[] = self::publishLog( $this->title, $logType, '', $performer, [ Constants::IMAGE_TABLE_ID_FIELD => $newId ] );
@@ -217,7 +217,7 @@ class File {
 					Constants::IMAGES_TABLE,
 					[ Constants::IMAGE_TABLE_TITLE_FIELD => $this->title->getDBKey(), Constants::IMAGE_TABLE_STATUS_FIELD => $newStatusBits ],
 					__METHOD__
- 				);
+				);
 				$newId = $db->insertId();
 				$logType = 'update';
 				if ( $netfreeChange ) {

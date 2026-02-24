@@ -2,7 +2,6 @@
 
 namespace MediaWiki\Extension\AspaklaryaImages\Hooks;
 
-use MediaWiki\Context\RequestContext;
 use MediaWiki\Extension\AspaklaryaImages\Constants;
 use MediaWiki\Extension\AspaklaryaImages\File;
 use MediaWiki\Extension\AspaklaryaImages\Gallery\NoBrokenImagesGallery;
@@ -11,9 +10,8 @@ use MediaWiki\Extension\AspaklaryaImages\Gallery\PackedHoverImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\Gallery\PackedImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\Gallery\PackedOverlayImageGallery;
 use MediaWiki\Extension\AspaklaryaImages\Gallery\SlideshowImageGallery;
-use MediaWiki\Extension\AspaklaryaImages\Specials\SpecialUnknownImages;
 use MediaWiki\Extension\AspaklaryaImages\Gallery\TraditionalImageGallery;
-use MediaWiki\Extension\AspaklaryaImages\Specials\SpecialManageStatus;
+use MediaWiki\Extension\AspaklaryaImages\Specials\SpecialUnknownImages;
 use MediaWiki\Hook\AfterParserFetchFileAndTitleHook;
 use MediaWiki\Hook\GalleryGetModesHook;
 use MediaWiki\Hook\ImageBeforeProduceHTMLHook;
@@ -113,7 +111,7 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 		foreach ( $ig->getImages() as $image ) {
 			if ( $this->getImageStatus( $image[0], $frame, $res, $parser ) ) {
 				$images[] = $image;
-			} 
+			}
 		}
 		if ( count( $images ) < count( $ig->getImages() ) ) {
 			$ig->setImages( $images );
@@ -126,10 +124,10 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 		$netfreeStatus = $fileClass->getNetfreeStatus();
 		$config = MediaWikiServices::getInstance()->getMainConfig();
 		$blockUnknown = (bool)$config->get( 'BlockNetfreeUnknownImages' );
-		if ( $blockUnknown && 
-			( $netfreeStatus === false || 
-			( $netfreeStatus === null && !(bool)$fileClass->getAuthorizedStatus() ) 
-		) ) {
+		if ( $blockUnknown &&
+			( $netfreeStatus === false ||
+			( $netfreeStatus === null && !(bool)$fileClass->getAuthorizedStatus() )
+ ) ) {
 			$res = '';
 			return false;
 		}

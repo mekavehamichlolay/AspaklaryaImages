@@ -110,12 +110,12 @@ class FilesMannager {
 
 		$transaction = $con->startAtomic( __METHOD__, $con::ATOMIC_CANCELABLE );
 		$success = false;
-		$con->onTransactionCommitOrIdle( function () use ( $titles, $self ) {
+		$con->onTransactionCommitOrIdle( static function () use ( $titles, $self ) {
 			foreach ( $titles as $title ) {
 				$cacheKey = Constants::makeCacheKey( $self->cache, $title->getDBkey() );
 				$self->cache->delete( $cacheKey );
 			}
-			return true;	
+			return true;
 		} );
 		try {
 			$resultSet = $con->newSelectQueryBuilder()
@@ -187,7 +187,7 @@ class FilesMannager {
 					$result = array_merge( $result, array_fill_keys( array_values( $current[ $bit ] ), 'update' ) );
 				}
 			}
-			
+
 			foreach ( $changedBits as $bit => $_ ) {
 				$toDelete = array_merge( $toDelete, array_keys( $current[ $bit ] ) );
 			}

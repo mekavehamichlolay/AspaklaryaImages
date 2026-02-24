@@ -68,16 +68,16 @@ class SpecialUnknownImages extends QueryPage {
 				$this->getOutput()->addHTML( Html::rawElement(
 					'p',
 					[],
-					$this->msg( 'aspaklaryaimages-showing-unknown-for-page', 
-					[ $lr->makeKnownLink( $title, $title->getPrefixedText(),[],['action'=>'purge'] ) ] 
-					)->text()
+					$this->msg( 'aspaklaryaimages-showing-unknown-for-page',
+					[ $lr->makeKnownLink( $title, $title->getPrefixedText(), [], [ 'action' => 'purge' ] ) ]
+ )->text()
 				) );
 			}
 		}
 		parent::execute( $par );
 	}
 
-    protected function outputResults( $out, $skin, $dbr, $res, $num, $offset ) {
+	protected function outputResults( $out, $skin, $dbr, $res, $num, $offset ) {
 		if ( $num > 0 ) {
 			$gallery = ImageGalleryBase::factory( 'nobrokenimages', $this->getContext() );
 
@@ -94,20 +94,20 @@ class SpecialUnknownImages extends QueryPage {
 					break;
 				}
 			}
-            $out->addHTML( Html::rawElement(
-                'form',
-                [
-                    'id' => 'aspaklaryaimages-netfree-form',
-                    'action' => '',
-                ],
-                Html::rawElement(
-                    'button',
-                    [ 'type' => 'submit' ],
-                    $this->msg( 'aspaklaryaimages-submit-button' )->text()
-                )
-            ) );
+			$out->addHTML( Html::rawElement(
+				'form',
+				[
+					'id' => 'aspaklaryaimages-netfree-form',
+					'action' => '',
+				],
+				Html::rawElement(
+					'button',
+					[ 'type' => 'submit' ],
+					$this->msg( 'aspaklaryaimages-submit-button' )->text()
+				)
+			) );
 			$out->addHTML( $gallery->toHTML() );
-            $out->addModules( 'ext.aspaklaryaimages.netfreeUnknown' );
+			$out->addModules( 'ext.aspaklaryaimages.netfreeUnknown' );
 		}
 	}
 
@@ -138,7 +138,7 @@ class SpecialUnknownImages extends QueryPage {
 			'tables' => [ 'imagelinks', Constants::IMAGES_TABLE ],
 			'fields' => [
 				'title' => 'il_to',
-                'namespace' => (string)NS_FILE,
+				'namespace' => (string)NS_FILE,
 			],
 			'conds' => [
 				Constants::IMAGE_TABLE_TITLE_FIELD => null,
@@ -159,70 +159,69 @@ class SpecialUnknownImages extends QueryPage {
 		return 'maintenance';
 	}
 
-    protected function formatResult( $skin, $result ) {
+	protected function formatResult( $skin, $result ) {
 		return false;
 	}
 
-    protected function getCellHtml( $row ) {
-        $netfreeRadioButtons = [];
-        foreach ( Constants::NETFREE_OPTIONS as $option ) {
-            if ( !$option ) {
-                continue;
-            }
-            $netfreeRadioButtons[] = Html::rawElement('span', ['class' => 'netfree-option'], Html::rawElement(
-                    'input',
-                    [
-                        'type' => 'radio',
-                        'name' => 'n-'.$row->title,
-                        'value' => 'n-'.$option,
-                        'form' => "aspaklaryaimages-netfree-form",
-                        'checked' => $option === 'none' ? 'checked' : null,
+	protected function getCellHtml( $row ) {
+		$netfreeRadioButtons = [];
+		foreach ( Constants::NETFREE_OPTIONS as $option ) {
+			if ( !$option ) {
+				continue;
+			}
+			$netfreeRadioButtons[] = Html::rawElement( 'span', [ 'class' => 'netfree-option' ], Html::rawElement(
+					'input',
+					[
+						'type' => 'radio',
+						'name' => 'n-' . $row->title,
+						'value' => 'n-' . $option,
+						'form' => "aspaklaryaimages-netfree-form",
+						'checked' => $option === 'none' ? 'checked' : null,
 						'id' => "n-{$option}-{$row->title}",
-                    ]
-            )
-            . Html::rawElement(
-                'label',
-                [ 'for' => "n-{$option}-{$row->title}" ],
-                $this->msg( "aspaklaryaimages-option-$option" )->text()
-            ) );
-        }
+					]
+			)
+			. Html::rawElement(
+				'label',
+				[ 'for' => "n-{$option}-{$row->title}" ],
+				$this->msg( "aspaklaryaimages-option-$option" )->text()
+			) );
+		}
 		$authorizedRadioButtons = [];
-        foreach ( Constants::AUTHORIZED_OPTIONS as $option ) {
-            if ( !$option ) {
-                continue;
-            }
-            $authorizedRadioButtons[] = Html::rawElement('span', ['class' => 'authorized-option'], Html::rawElement(
-                    'input',
-                    [
-                        'type' => 'radio',
-                        'name' => 'a-'.$row->title,
-                        'value' => 'a-'.$option,
-                        'form' => "aspaklaryaimages-netfree-form",
-                        'checked' => $option === 'none' ? 'checked' : null,
+		foreach ( Constants::AUTHORIZED_OPTIONS as $option ) {
+			if ( !$option ) {
+				continue;
+			}
+			$authorizedRadioButtons[] = Html::rawElement( 'span', [ 'class' => 'authorized-option' ], Html::rawElement(
+					'input',
+					[
+						'type' => 'radio',
+						'name' => 'a-' . $row->title,
+						'value' => 'a-' . $option,
+						'form' => "aspaklaryaimages-netfree-form",
+						'checked' => $option === 'none' ? 'checked' : null,
 						'id' => "a-{$option}-{$row->title}",
-                    ]
-            )
-            . Html::rawElement(
-                'label',
-                [ 'for' => "a-{$option}-{$row->title}" ],
-                $this->msg( "aspaklaryaimages-option-$option" )->text()
-            ) );
-        }
+					]
+			)
+			. Html::rawElement(
+				'label',
+				[ 'for' => "a-{$option}-{$row->title}" ],
+				$this->msg( "aspaklaryaimages-option-$option" )->text()
+			) );
+		}
 		return Html::rawElement(
 			'div',
 			[ 'class' => 'main-option-box' ],
 			Html::rawElement(
 				'div',
-				['class' => 'authorized-option-box'],
+				[ 'class' => 'authorized-option-box' ],
 				Html::rawElement( 'h6', [], $this->msg( 'aspaklaryaimages-authorized-options' )->text() ) .
 				implode( '', $authorizedRadioButtons )
-			) . Html::rawElement( 
-				'div', 
-				['class' => 'netfree-option-box'], 
+			) . Html::rawElement(
+				'div',
+				[ 'class' => 'netfree-option-box' ],
 				Html::rawElement( 'h6', [], $this->msg( 'aspaklaryaimages-netfree-options' )->text() ) .
-				implode( '', $netfreeRadioButtons ) 
-        	)
-		) ;
-    }
+				implode( '', $netfreeRadioButtons )
+ )
+		);
+	}
 }
-
