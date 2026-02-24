@@ -70,7 +70,7 @@ class File {
 			->caller( __METHOD__ )
 			->fetchRow();
 		if ( $row === false ) {
-		   return 0;
+			return 0;
 		}
 		return (int)$row->{Constants::IMAGE_TABLE_STATUS_FIELD};
 	}
