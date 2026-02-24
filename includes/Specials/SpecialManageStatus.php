@@ -211,7 +211,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 
 	protected function noChange() {
 		$out = $this->getOutput();
-		$out->setPageTitleMsg( $this->msg( 'actionnochange' ) );
+		$out->setPageTitleMsg( $this->msg( 'aspaklaryaimages-actionnochange' ) );
 		$this->showForm();
 	}
 
