@@ -7,7 +7,6 @@ use MediaTransformOutput;
 use MediaWiki\HookContainer\HookRunner;
 use MediaWiki\Html\Html;
 use MediaWiki\Linker\Linker;
-use MediaWiki\MainConfigNames;
 use MediaWiki\MediaWikiServices;
 use MediaWiki\Parser\Parser;
 use MediaWiki\Title\Title;
@@ -19,13 +18,11 @@ class NoBrokenImagesGallery extends TraditionalImageGallery {
 		if ( $resolveFilesViaParser ) {
 			$parserOutput = $this->mParser->getOutput();
 			$repoGroup = null;
-			$linkRenderer = $this->mParser->getLinkRenderer();
 			$badFileLookup = $this->mParser->getBadFileLookup();
 		} else {
 			$parserOutput = $this->getOutput();
 			$services = MediaWikiServices::getInstance();
 			$repoGroup = $services->getRepoGroup();
-			$linkRenderer = $services->getLinkRenderer();
 			$badFileLookup = $services->getBadFileLookup();
 		}
 
@@ -55,10 +52,7 @@ class NoBrokenImagesGallery extends TraditionalImageGallery {
 			}
 			$lb->execute();
 		}
-
-		$lang = $this->getRenderLang();
-		$enableLegacyMediaDOM =
-			$this->getConfig()->get( MainConfigNames::ParserEnableLegacyMediaDOM );
+		
 		$hookRunner = new HookRunner( MediaWikiServices::getInstance()->getHookContainer() );
 
 		# Output each image...
@@ -92,7 +86,7 @@ class NoBrokenImagesGallery extends TraditionalImageGallery {
 			$isBadFile = $img && $thumb && $this->mHideBadImages &&
 				$badFileLookup->isBadFile( $nt->getDBkey(), $this->getContextTitle() );
 
-			if ( !$img || !$thumb || ( !$enableLegacyMediaDOM && $thumb->isError() ) || $isBadFile ) {
+			if ( !$img || !$thumb || $thumb->isError() || $isBadFile ) {
 				continue;
 			} else {
 				/** @var MediaTransformOutput $thumb */
@@ -116,9 +110,7 @@ class NoBrokenImagesGallery extends TraditionalImageGallery {
 						$params['alt'] = $alt;
 					}
 					$params['title'] = $imageOptions['title'];
-					if ( !$enableLegacyMediaDOM ) {
-						$params['img-class'] = 'mw-file-element';
-					}
+					$params['img-class'] = 'mw-file-element';
 					$imageParameters = Linker::getImageLinkMTOParams(
 						$imageOptions, $descQuery, $this->mParser
 					) + $params;
@@ -133,29 +125,17 @@ class NoBrokenImagesGallery extends TraditionalImageGallery {
 				Linker::processResponsiveImages( $img, $thumb, $transformOptions );
 
 				$thumbhtml = $thumb->toHtml( $imageParameters );
-
-				if ( !$enableLegacyMediaDOM ) {
-					$thumbhtml = Html::rawElement(
-						'span', [ 'typeof' => $rdfaType ], $thumbhtml
-					);
-				} else {
-					$thumbhtml = Html::rawElement( 'div', [
-						# Auto-margin centering for block-level elements. Needed
-						# now that we have video handlers since they may emit block-
-						# level elements as opposed to simple <img> tags. ref
-						# http://css-discuss.incutio.com/?page=CenteringBlockElement
-						'style' => "margin:{$vpad}px auto;",
-					], $thumbhtml );
-				}
-
+				$thumbhtml = Html::rawElement(
+					'span', [ 'typeof' => $rdfaType ], $thumbhtml
+				);
+				
 				# Set both fixed width and min-height.
 				$width = $this->getThumbDivWidth( $thumb->getWidth() );
 				$height = $this->getThumbPadding() + $this->mHeights;
 				$thumbhtml = "\n\t\t\t" . Html::rawElement( 'div', [
 					'class' => 'thumb',
 					'style' => "width: {$width}px;" .
-						( !$enableLegacyMediaDOM && $this->mMode === 'traditional' ?
-							" height: {$height}px;" : '' ),
+						( $this->mMode === 'traditional' ? " height: {$height}px;" : '' ),
 				], $thumbhtml );
 
 				// Call parser transform hook
@@ -179,11 +159,9 @@ class NoBrokenImagesGallery extends TraditionalImageGallery {
 			Html::rawElement(
 				'li',
 				[ 'class' => 'gallerybox', 'style' => 'width: ' . $gbWidth ],
-				( $enableLegacyMediaDOM ? Html::openElement( 'div', [ 'style' => 'width: ' . $gbWidth ] ) : '' )
-					. $thumbhtml
+				$thumbhtml
 					. $galleryText
 					. "\n\t\t"
-					. ( $enableLegacyMediaDOM ? Html::closeElement( 'div' ) : '' )
 			);
 		}
 		$output .= "\n" . Html::closeElement( 'ul' );
