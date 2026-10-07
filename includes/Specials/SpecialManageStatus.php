@@ -14,6 +14,7 @@ use MediaWiki\Logging\LogEventsList;
 use MediaWiki\Logging\LogPage;
 use MediaWiki\Permissions\PermissionManager;
 use MediaWiki\SpecialPage\UnlistedSpecialPage;
+use MediaWiki\Status\Status;
 use MediaWiki\Title\Title;
 use Wikimedia\ObjectCache\WANObjectCache;
 use Wikimedia\Rdbms\ILoadBalancer;
@@ -252,7 +253,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 		return true;
 	}
 
-	public function getRestriction() {
+	public function getRestriction() :string {
 		return Constants::RESTRICTION;
 	}
 

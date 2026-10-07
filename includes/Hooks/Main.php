@@ -119,7 +119,7 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 		}
 	}
 
-	private function getImageStatus( Title $title, &$frameParams, &$res, Parser $parser ): bool {
+	private function getImageStatus( Title $title, array &$frameParams, string &$res, Parser $parser ): bool {
 		$fileClass = new File( $this->loadBalancer, $this->cache, $title );
 		$netfreeStatus = $fileClass->getNetfreeStatus();
 		$config = MediaWikiServices::getInstance()->getMainConfig();
