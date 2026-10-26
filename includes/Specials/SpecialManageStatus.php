@@ -252,7 +252,7 @@ class SpecialManageStatus extends UnlistedSpecialPage {
 		return true;
 	}
 
-	public function getRestriction() {
+	public function getRestriction(): string {
 		return Constants::RESTRICTION;
 	}
 
