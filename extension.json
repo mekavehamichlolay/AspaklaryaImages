@@ -3,12 +3,15 @@
 	"name": "AspaklaryaImages",
 	"version": "2.0",
 	"url": "https://www.mediawiki.org/wiki/Extension:AspaklaryaImages",
-	"author": "[https://www.hamichlol.org.il/משתמש:מקוה מקוה]",
-	"descriptionmsg": "aspaklarya_images-desc",
+	"author": [
+		"[https://www.hamichlol.org.il/משתמש:מקוה מקוה]",
+		"[https://www.hamichlol.org.il/משתמש:נריה נריה]"
+	],
+	"descriptionmsg": "aspaklaryaimages-desc",
 	"license-name": "GPL-3.0-or-later",
 	"type": "other",
 	"requires": {
-		"MediaWiki": ">= 1.44.0"
+		"MediaWiki": ">= 1.47.0"
 	},
 	"MessagesDirs": {
 		"AspaklaryaImages": [
@@ -19,35 +22,150 @@
 		"MediaWiki\\Extension\\AspaklaryaImages\\": "includes/"
 	},
 	"GroupPermissions": {
-		"aspaklaryaEditor": {},
-		"sysop": {},
-		"spiritualCommittee": {}
+		"*": {
+			"aspaklaryaimages-show-unknown-images": true
+		},
+		"aspaklaryaEditor": {
+			"aspaklaryaimages-manage-status": true,
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
+		},
+		"sysop": {
+			"aspaklaryaimages-manage-status": true,
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
+		},
+		"spiritualCommittee": {
+			"aspaklaryaimages-manage-status": true,
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
+		},
+		"imagesconfirmers": {
+			"aspaklaryaimages-manage-status": true,
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
+		}
 	},
-	"AvailableRights": [],
+	"AvailableRights": [
+		"aspaklaryaimages-manage-status",
+		"aspaklaryaimages-view-status",
+		"aspaklaryaimages-show-unknown-images",
+		"aspaklaryaimages-show-blocked-images"
+	],
 	"Hooks": {
-		"LoadExtensionSchemaUpdates": "schema"
+		"LoadExtensionSchemaUpdates": "schema",
+		"ImageBeforeProduceHTML": "main",
+		"BeforePageDisplay": "main",
+		"GetPreferences": "main",
+		"AfterParserFetchFileAndTitle": "main",
+		"GalleryGetModes": "main",
+		"wgQueryPages": "main",
+		"SkinTemplateNavigation::Universal": "main"
 	},
 	"HookHandlers": {
 		"schema": {
 			"class": "MediaWiki\\Extension\\AspaklaryaImages\\Hooks\\SchemaUpdater"
+		},
+		"main": {
+			"class": "MediaWiki\\Extension\\AspaklaryaImages\\Hooks\\Main",
+			"services": [
+				"DBLoadBalancer",
+				"MainWANObjectCache"
+			]
 		}
 	},
-	"LogTypes": [],
-	"LogNames": {},
-	"LogHeaders": {},
-	"LogActionsHandlers": {},
+	"LogTypes": [
+		"aspaklaryaimages"
+	],
+	"LogNames": {
+		"aspaklaryaimages": "aspaklaryaimages-log-name"
+	},
+	"LogHeaders": {
+		"aspaklaryaimages": "aspaklaryaimages-log-header"
+	},
+	"LogActionsHandlers": {
+		"aspaklaryaimages/*": "LogFormatter"
+	},
+	"LogParamsAllowedClasses": {
+		"aspaklaryaimages/insert": [
+			"MediaWiki\\Message\\Message",
+			"Message"
+		],
+		"aspaklaryaimages/update": [
+			"MediaWiki\\Message\\Message",
+			"Message"
+		]
+	},
 	"LogRestrictions": {},
 	"Actions": {},
-	"APIModules": {},
-	"ExtensionMessagesFiles": {},
-	"SpecialPages": {},
-	"GrantPermissionGroups": {},
-	"GrantPermissions": {},
-	"config": {},
+	"APIModules": {
+		"aspaklaryaimages-manage-status": "MediaWiki\\Extension\\AspaklaryaImages\\ApiAIStatusMannage"
+	},
+	"ExtensionMessagesFiles": {
+		"AspaklaryaImagesAlias": "AspaklaryaImages.alias.php"
+	},
+	"SpecialPages": {
+		"Unknownfiles": {
+			"class": "MediaWiki\\Extension\\AspaklaryaImages\\Specials\\SpecialUnknownImages",
+			"services": [
+				"ConnectionProvider"
+			]
+		},
+		"ManageFileStatus": {
+			"class": "MediaWiki\\Extension\\AspaklaryaImages\\Specials\\SpecialManageStatus",
+			"services": [
+				"DBLoadBalancer",
+				"MainWANObjectCache",
+				"PermissionManager"
+			]
+		}
+	},
+	"GrantPermissionGroups": {
+		"aspaklaryaimages": "administration"
+	},
+	"GrantPermissions": {
+		"aspaklaryaimages": {
+			"aspaklaryaimages-manage-status": true,
+			"aspaklaryaimages-view-status": true,
+			"aspaklaryaimages-show-unknown-images": true,
+			"aspaklaryaimages-show-blocked-images": true
+		}
+	},
+	"config": {
+		"BlockNetfreeUnknownImages": {
+			"value": false,
+			"description": "If true, images that are not explicitly defined as open in netfree will be blocked for all users at the server level. It also won't add any placeholder or indication that the image is blocked, including any tracking category."
+		}
+	},
 	"ResourceFileModulePaths": {
 		"localBasePath": "resources",
 		"remoteExtPath": "AspaklaryaImages/resources"
 	},
-	"ResourceModules": {},
-	"DefaultUserOptions": {}
+	"ResourceModules": {
+		"ext.aspaklaryaimages.styles": {
+			"styles": "ext.aspaklaryaimages.css"
+		},
+		"ext.aspaklaryaimages.netfreeUnknown": {
+			"scripts": "ext.aspaklaryaimages.netfreeUnknown.js",
+			"styles": "ext.aspaklaryaimages.netfreeUnknown.css",
+			"dependencies": [
+				"mediawiki.util",
+				"mediawiki.jqueryMsg",
+				"mediawiki.user"
+			]
+		}
+	},
+	"TrackingCategories": [
+		"aspaklaryaimages-unauthorized-category",
+		"aspaklaryaimages-netfree-unknown-category",
+		"aspaklaryaimages-netfree-blocked-category"
+	],
+	"DefaultUserOptions": {
+		"aspaklaryaimages-show-unknown": 1,
+		"aspaklaryaimages-show-blocked": 0
+	}
 }

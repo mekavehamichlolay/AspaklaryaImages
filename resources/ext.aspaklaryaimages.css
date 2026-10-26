@@ -1,0 +1,6 @@
+.ai-preference-hide-unknown figure.aspaklaryaimages-netfree-unknown,
+.ai-preference-hide-blocked figure.aspaklaryaimages-netfree-blocked,
+.ai-preference-hide-unknown .gallerybox:has(.aspaklaryaimages-netfree-unknown),
+.ai-preference-hide-blocked .gallerybox:has(.aspaklaryaimages-netfree-blocked) {
+    display: none;
+}
