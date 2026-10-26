@@ -107,15 +107,18 @@ class Main implements ImageBeforeProduceHTMLHook, BeforePageDisplayHook, GetPref
 	 * @return void
 	 */
 	public function onAfterParserFetchFileAndTitle( $parser, $ig, &$html ) {
-		$frame = [];
 		$res = '';
 		$images = [];
 		foreach ( $ig->getImages() as $image ) {
+			$frame = [];
 			if ( $this->getImageStatus( $image[0], $frame, $res, $parser ) ) {
+				if ( $frame['class'] !== '' ) {
+					$image[6]['class'] = trim( ( $image[6]['class'] ?? '' ) . ' ' . $frame['class'] );
+				}
 				$images[] = $image;
 			} 
 		}
-		if ( count( $images ) < count( $ig->getImages() ) ) {
+		if ( $images !== $ig->getImages() ) {
 			$ig->setImages( $images );
 			$html = $ig->toHTML();
 		}
