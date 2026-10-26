@@ -90,6 +90,16 @@
 	"LogActionsHandlers": {
 		"aspaklaryaimages/*": "LogFormatter"
 	},
+	"LogParamsAllowedClasses": {
+		"aspaklaryaimages/insert": [
+			"MediaWiki\\Message\\Message",
+			"Message"
+		],
+		"aspaklaryaimages/update": [
+			"MediaWiki\\Message\\Message",
+			"Message"
+		]
+	},
 	"LogRestrictions": {},
 	"Actions": {},
 	"APIModules": {
